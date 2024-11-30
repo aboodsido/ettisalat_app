@@ -28,11 +28,12 @@ class HomePage extends StatelessWidget {
           ),
         ),
         body: TabBarView(
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             const MapPage(),
             HostsPage(),
             const UsersPage(),
-            SettingsPage(),
+            const SettingsPage(),
           ],
         ),
       ),

@@ -68,8 +68,7 @@ class _MapPageState extends State<MapPage> {
           position: const LatLng(
               31.7, 34.5782), // Replace with actual host coordinates
           infoWindow: const InfoWindow(title: 'Host 3'),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+          icon: BitmapDescriptor.defaultMarkerWithHue(100),
         ),
       });
     }
