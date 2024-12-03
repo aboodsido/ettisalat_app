@@ -1,3 +1,4 @@
+import 'package:ettisalat_app/app/controllers/marker_settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -16,17 +17,22 @@ class _MapPageState extends State<MapPage> {
   final MapSettingsController mapSettingsController =
       Get.put(MapSettingsController());
 
+  final MarkerSettingsController markerSettingsController =
+      Get.put(MarkerSettingsController());
+
   final Set<Marker> _markers = {};
   String? _zoomLevel;
   bool _disableDoubleClickZoom = false;
   bool _showPlaces = true;
   // bool _showHosts = true;
   // bool _showFibers = false;
+  BitmapDescriptor customIcon = BitmapDescriptor.defaultMarker;
 
   @override
   void initState() {
     super.initState();
-
+    customMarker();
+    mapSettingsController.loadSettings();
     // Initialize settings from the controller
     _zoomLevel = mapSettingsController.zoomLevel.value;
     _disableDoubleClickZoom =
@@ -34,10 +40,19 @@ class _MapPageState extends State<MapPage> {
     _showPlaces = mapSettingsController.showPlaces.value;
     // _showHosts = mapSettingsController.showHosts.value;
     // _showFibers = mapSettingsController.showFibers.value;
-    // Add markersvc
     _addHostMarkers();
-    mapSettingsController.loadSettings();
     print(_zoomLevel);
+  }
+
+  void customMarker() {
+    BitmapDescriptor.asset(const ImageConfiguration(), 'assets/images/wifi.png',
+            height: markerSettingsController.iconSize.value,
+            width: markerSettingsController.iconSize.value)
+        .then((icon) {
+      setState(() {
+        customIcon = icon;
+      });
+    });
   }
 
   void _addHostMarkers() {
@@ -52,23 +67,21 @@ class _MapPageState extends State<MapPage> {
           position:
               const LatLng(31.5, 34.5), // Replace with actual host coordinates
           infoWindow: const InfoWindow(title: 'Host 1'),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          icon: customIcon,
         ),
         Marker(
           markerId: const MarkerId('host2'),
           position: const LatLng(
               31.23, 34.125), // Replace with actual host coordinates
           infoWindow: const InfoWindow(title: 'Host 2'),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          icon: customIcon,
         ),
         Marker(
           markerId: const MarkerId('host3'),
           position: const LatLng(
               31.7, 34.5782), // Replace with actual host coordinates
           infoWindow: const InfoWindow(title: 'Host 3'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(100),
+          icon: customIcon,
         ),
       });
     }
@@ -87,10 +100,17 @@ class _MapPageState extends State<MapPage> {
           // Observe changes to settings and update map accordingly
           return GoogleMap(
             initialCameraPosition: CameraPosition(
-              target: const LatLng(31.7, 34.5782), // Default camera position
+              target: const LatLng(31.5, 34.5), // Default camera position
               zoom: double.parse(_zoomLevel!), // Set zoom level
             ),
-            markers: _markers,
+            markers: {
+              Marker(
+                  markerId: const MarkerId('host1'),
+                  position: const LatLng(
+                      31.5, 34.5), // Replace with actual host coordinates
+                  infoWindow: const InfoWindow(title: 'Host 1'),
+                  icon: customIcon),
+            },
             zoomGesturesEnabled: !_disableDoubleClickZoom,
             onMapCreated: (GoogleMapController controller) {
               _controller = controller;

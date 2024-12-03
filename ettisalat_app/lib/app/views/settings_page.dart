@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controllers/map_settings_controller.dart';
+import '../controllers/marker_settings_controller.dart';
 import '../services/dropdown_list_widget.dart';
 import '../services/settings_container_widget.dart';
 
@@ -13,6 +14,8 @@ class SettingsPage extends StatelessWidget {
     // Instantiate the MapSettingsController
     final MapSettingsController mapSettingsController =
         Get.put(MapSettingsController());
+    final MarkerSettingsController markerSettingsController =
+        Get.put(MarkerSettingsController());
 
     return Scaffold(
       // appBar: AppBar(title: const Text('Settings')),
@@ -159,100 +162,124 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
+
+              // Icon Size
               buildSettingContainer(
-                description: 'The shape of the icon that appears on the map',
+                description: 'The size of the icon that appears on the map',
                 title: 'Icon Size',
-                child: buildDropdownListWidget(
-                  items: [
-                    const DropdownMenuItem<String>(
-                      value: 'small_size',
-                      child: Text('Small Size'),
-                    ),
-                    const DropdownMenuItem<String>(
-                      value: 'medium_size',
-                      child: Text('Medium Size'),
-                    ),
-                    const DropdownMenuItem<String>(
-                      value: 'large_size',
-                      child: Text('Large Size'),
-                    ),
-                  ],
-                  onChanged: (value) {},
-                  value: 'small_size',
+                child: Obx(
+                  () => buildDropdownListWidget(
+                    items: const [
+                      DropdownMenuItem(
+                          value: '20.0', child: Text('Small Size')),
+                      DropdownMenuItem(
+                          value: '30.0', child: Text('Medium Size')),
+                      DropdownMenuItem(
+                          value: '40.0', child: Text('Large Size')),
+                    ],
+                    value: markerSettingsController.iconSize.value,
+                    onChanged: (value) {
+                      markerSettingsController.iconSize.value = double.parse(value!);
+                      markerSettingsController.saveMarkerSettings();
+                    },
+                  ),
                 ),
               ),
-
               const SizedBox(height: 16),
 
+              // Icon Shape
               buildSettingContainer(
                 description: 'The shape of the icon that appears on the map',
                 title: 'Icon Shape',
-                child: buildDropdownListWidget(
-                  items: const [
-                    DropdownMenuItem(value: 'wifi', child: Text('Wifi Icon')),
-                  ],
-                  onChanged: (value) {},
-                  value: 'wifi',
+                child: Obx(
+                  () => buildDropdownListWidget(
+                    items: const [
+                      DropdownMenuItem(value: 'wifi', child: Text('Wifi Icon')),
+                      // Add more shapes if needed
+                    ],
+                    value: markerSettingsController.iconShape.value,
+                    onChanged: (value) {
+                      markerSettingsController.iconShape.value = value!;
+                      markerSettingsController.saveMarkerSettings();
+                    },
+                  ),
                 ),
               ),
-
               const SizedBox(height: 16),
 
+              // Draggable Icons
               buildSettingContainer(
-                description: 'The icon can be moved to an place on the map',
+                description: 'The icon can be moved to any place on the map',
                 title: 'Draggable Icons',
-                child: Switch(
-                  value: false,
-                  activeColor: Colors.blue,
-                  onChanged: (value) {},
+                child: Obx(
+                  () => Switch(
+                    value: markerSettingsController.draggableIcons.value,
+                    onChanged: (value) {
+                      markerSettingsController.draggableIcons.value = value;
+                      markerSettingsController.saveMarkerSettings();
+                    },
+                  ),
                 ),
               ),
-
               const SizedBox(height: 16),
 
+              // Show Icon Title
               buildSettingContainer(
                 description:
-                    'Show the title of the icon where the cursor is placed on it',
+                    'Show the title of the icon when the cursor is placed on it',
                 title: 'Show Icon Title',
-                child: Switch(
-                  value: true,
-                  activeColor: Colors.blue,
-                  onChanged: (value) {},
+                child: Obx(
+                  () => Switch(
+                    value: markerSettingsController.showIconTitle.value,
+                    onChanged: (value) {
+                      markerSettingsController.showIconTitle.value = value;
+                      markerSettingsController.saveMarkerSettings();
+                    },
+                  ),
                 ),
               ),
-
               const SizedBox(height: 16),
 
+              // Show Icon Label
               buildSettingContainer(
-                description: 'Show the lable on the icon to identify this icon',
-                title: 'Show Icon Lable',
-                child: Switch(
-                  value: true,
-                  activeColor: Colors.blue,
-                  onChanged: (value) {},
+                description: 'Show the label on the icon to identify it',
+                title: 'Show Icon Label',
+                child: Obx(
+                  () => Switch(
+                    value: markerSettingsController.showIconLabel.value,
+                    onChanged: (value) {
+                      markerSettingsController.showIconLabel.value = value;
+                      markerSettingsController.saveMarkerSettings();
+                    },
+                  ),
                 ),
               ),
-
               const SizedBox(height: 16),
 
+              // Clickable Icons
               buildSettingContainer(
                 description:
-                    'Icons can be clicked where the cursor is placed on them',
+                    'Icons can be clicked when the cursor is placed on them',
                 title: 'Clickable Icons',
-                child: Switch(
-                  value: false,
-                  activeColor: Colors.blue,
-                  onChanged: (value) {},
+                child: Obx(
+                  () => Switch(
+                    value: markerSettingsController.clickableIcons.value,
+                    onChanged: (value) {
+                      markerSettingsController.clickableIcons.value = value;
+                      markerSettingsController.saveMarkerSettings();
+                    },
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               // Save Button
               Row(
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      mapSettingsController
-                          .saveSettings(); // Save settings to SharedPreferences
+                      mapSettingsController.saveSettings();
+                      markerSettingsController
+                          .saveMarkerSettings(); // Save settings to SharedPreferences
                     },
                     child: const Text('Save Settings',
                         style: TextStyle(fontWeight: FontWeight.bold)),
@@ -263,7 +290,9 @@ class SettingsPage extends StatelessWidget {
                     style: const ButtonStyle(
                         backgroundColor: WidgetStatePropertyAll(Colors.red)),
                     onPressed: () {
-                      mapSettingsController.resetSettings(); // Reset settings
+                      mapSettingsController.resetSettings();
+                      markerSettingsController
+                          .resetSettings(); // Reset settings
                     },
                     child: const Text(
                       'Reset Settings',
