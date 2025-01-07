@@ -3,14 +3,14 @@ import 'package:get/get.dart';
 
 import 'settings_page.dart';
 
-class UsersPage extends StatelessWidget {
-  const UsersPage({super.key});
+class DashboardPage extends StatelessWidget {
+  const DashboardPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Users'),
+        title: const Text('Dashboard'),
         centerTitle: true,
         actions: [
           IconButton(
@@ -21,9 +21,7 @@ class UsersPage extends StatelessWidget {
           )
         ],
       ),
-      body: const Center(
-        child: Text('Users Page Content'),
-      ),
+      body: Container(),
     );
   }
 }

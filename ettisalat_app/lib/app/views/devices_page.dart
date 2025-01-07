@@ -3,15 +3,28 @@ import 'package:get/get.dart';
 
 import '../controllers/host_controller.dart';
 import '../services/host_form_dialog.dart';
+import 'settings_page.dart';
 
-class HostsPage extends StatelessWidget {
+class DevicesPage extends StatelessWidget {
   final HostController hostController = Get.put(HostController());
 
-  HostsPage({super.key});
+  DevicesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Devices'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.to(const SettingsPage());
+            },
+            icon: const Icon(Icons.settings_outlined),
+          )
+        ],
+      ),
       body: Column(
         children: [
           Padding(

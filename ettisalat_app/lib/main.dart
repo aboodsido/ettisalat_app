@@ -18,7 +18,7 @@ class EttisalatApp extends StatelessWidget {
       title: 'Ettisalat App',
       theme: ThemeData(
           // primarySwatch: Colors.deepOrange,
-          textTheme: GoogleFonts.montserratTextTheme(),
+          textTheme: GoogleFonts.tajawalTextTheme(),
           colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.white,
             primary: Colors.blue,

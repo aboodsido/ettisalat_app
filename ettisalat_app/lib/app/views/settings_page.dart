@@ -18,7 +18,10 @@ class SettingsPage extends StatelessWidget {
         Get.put(MarkerSettingsController());
 
     return Scaffold(
-      // appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(
+        title: Text('Settings'),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -74,6 +77,8 @@ class SettingsPage extends StatelessWidget {
                             value: 'off_less_24h', child: Text('Off Less 24h')),
                         DropdownMenuItem(
                             value: 'off_more_24h', child: Text('Off More 24h')),
+                        DropdownMenuItem(
+                            value: 'all', child: Text('All Statuses')),
                       ],
                       onChanged: (value) {
                         mapSettingsController.hostStatus.value = value;
@@ -179,7 +184,8 @@ class SettingsPage extends StatelessWidget {
                     ],
                     value: markerSettingsController.iconSize.value,
                     onChanged: (value) {
-                      markerSettingsController.iconSize.value = double.parse(value!);
+                      markerSettingsController.iconSize.value =
+                          double.parse(value!);
                       markerSettingsController.saveMarkerSettings();
                     },
                   ),

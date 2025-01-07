@@ -4,16 +4,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MapSettingsController extends GetxController {
   // Define settings with default values
   RxString zoomLevel = '10'.obs;
-  RxString hostStatus = 'active'.obs;
+  RxString hostStatus = 'all'.obs;
   RxBool disableDoubleClickZoom = false.obs;
   RxBool showPlaces = true.obs;
   RxBool showHosts = true.obs;
   RxBool showFibers = false.obs;
 
+  var isLoaded = false.obs; // Track loading state
+
   @override
   void onInit() {
     super.onInit();
-    loadSettings();  // Load settings when the app starts
+    loadSettings(); // Load settings when the app starts
   }
 
   // Save settings to SharedPreferences
@@ -29,18 +31,26 @@ class MapSettingsController extends GetxController {
 
   // Load settings from SharedPreferences
   Future<void> loadSettings() async {
+    if (isLoaded.value) {
+      // If settings are already in memory, skip reloading
+      return;
+    }
     final prefs = await SharedPreferences.getInstance();
     zoomLevel.value = prefs.getString('zoomLevel') ?? '10';
-    hostStatus.value = prefs.getString('hostStatus') ?? 'active';
-    disableDoubleClickZoom.value = prefs.getBool('disableDoubleClickZoom') ?? false;
+    hostStatus.value = prefs.getString('hostStatus') ?? 'all';
+    disableDoubleClickZoom.value =
+        prefs.getBool('disableDoubleClickZoom') ?? false;
     showPlaces.value = prefs.getBool('showPlaces') ?? true;
     showHosts.value = prefs.getBool('showHosts') ?? true;
     showFibers.value = prefs.getBool('showFibers') ?? false;
+
+    isLoaded.value = true; // Mark as loaded
   }
-   // Reset settings to default values
+
+  // Reset settings to default values
   void resetSettings() {
     zoomLevel.value = '10';
-    hostStatus.value = 'active';
+    hostStatus.value = 'all';
     disableDoubleClickZoom.value = false;
     showPlaces.value = true;
     showHosts.value = true;
