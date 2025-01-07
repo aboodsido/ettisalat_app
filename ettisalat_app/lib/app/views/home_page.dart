@@ -166,13 +166,13 @@ class _HomePageState extends State<HomePage>
               Tab(
                 icon: SvgPicture.asset(
                   'assets/icons/home.svg', // Dashboard icon
-                  color: _tabController.index == 0 ? primaryColr : Colors.grey,
+                  color: _tabController.index == 0 ? primaryColr : Colors.black,
                 ),
               ),
               Tab(
                 icon: SvgPicture.asset(
                   'assets/icons/user.svg',
-                  color: _tabController.index == 1 ? primaryColr : Colors.grey,
+                  color: _tabController.index == 1 ? primaryColr : Colors.black,
                 ),
               ),
               Transform.translate(
@@ -216,13 +216,13 @@ class _HomePageState extends State<HomePage>
               Tab(
                 icon: SvgPicture.asset(
                   'assets/icons/device.svg',
-                  color: _tabController.index == 3 ? primaryColr : Colors.grey,
+                  color: _tabController.index == 3 ? primaryColr : Colors.black,
                 ),
               ),
               Tab(
                 icon: SvgPicture.asset(
                   'assets/icons/more.svg',
-                  color: _tabController.index == 4 ? primaryColr : Colors.grey,
+                  color: _tabController.index == 4 ? primaryColr : Colors.black,
                 ),
               ),
             ],
