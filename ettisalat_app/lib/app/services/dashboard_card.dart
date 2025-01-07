@@ -5,6 +5,7 @@ Widget buildCard({
   required String number,
   required IconData icon,
   required Color color,
+  required Color circleColor,
 }) {
   return Container(
     margin: const EdgeInsets.only(bottom: 16), // Space between cards
@@ -46,7 +47,7 @@ Widget buildCard({
           ],
         ),
         CircleAvatar(
-          backgroundColor: Colors.white,
+          backgroundColor: circleColor,
           radius: 24, // Circle size
           child: Icon(
             icon,
