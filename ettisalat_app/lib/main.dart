@@ -17,12 +17,14 @@ class EttisalatApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Ettisalat App',
       theme: ThemeData(
-          // primarySwatch: Colors.deepOrange,
-          textTheme: GoogleFonts.tajawalTextTheme(),
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.white,
-            primary: Colors.blue,
-          )),
+        // primarySwatch: Colors.deepOrange,
+        textTheme: GoogleFonts.tajawalTextTheme(),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromRGBO(243, 243, 249, 1),
+          // primary: Colors.blue,
+        ),
+      ),
+      debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
       initialRoute: AppRoutes.HOME,
       getPages: AppRoutes.routes,
