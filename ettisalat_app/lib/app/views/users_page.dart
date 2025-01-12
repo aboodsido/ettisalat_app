@@ -1,5 +1,6 @@
 import 'package:ettisalat_app/app/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../controllers/user_controller.dart';
@@ -47,7 +48,7 @@ class UsersPage extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  elevation: 4,
+                  elevation: 1,
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Row(
@@ -91,25 +92,39 @@ class UsersPage extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            CircleAvatar(
-                              backgroundColor: Colors.green,
+                            Container(
+                              width: 35,
+                              height: 35,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               child: IconButton(
                                 onPressed: () => userController.editUser(index),
-                                icon:
-                                    const Icon(Icons.edit, color: Colors.white),
+                                icon: SvgPicture.asset(
+                                  'assets/icons/edit.svg',
+                                  width: 17,
+                                  height: 17,
+                                ),
                                 tooltip: "Edit User",
                               ),
                             ),
-                            const SizedBox(
-                              width: 7,
-                            ),
-                            CircleAvatar(
-                              backgroundColor: Colors.red,
+                            const SizedBox(width: 5),
+                            Container(
+                              width: 35,
+                              height: 35,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               child: IconButton(
                                 onPressed: () =>
                                     userController.deleteUser(index),
-                                icon: const Icon(Icons.delete,
-                                    color: Colors.white),
+                                icon: SvgPicture.asset(
+                                  'assets/icons/delete.svg',
+                                  width: 17,
+                                  height: 17,
+                                ),
                                 tooltip: "Delete User",
                               ),
                             ),

@@ -17,14 +17,14 @@ class UserController extends GetxController {
   void loadDummyData() {
     users.value = [
       UserModel(
-        name: "John Doe",
-        email: "john.doe@example.com",
+        name: "Abdullah Abosido",
+        email: "abdullah@example.com",
         phone: "123-456-7890",
         imageUrl: "https://via.placeholder.com/150",
       ),
       UserModel(
-        name: "Jane Smith",
-        email: "jane.smith@example.com",
+        name: "Taher Samara",
+        email: "tsamara@example.com",
         phone: "987-654-3210",
         imageUrl: "https://via.placeholder.com/150",
       ),
