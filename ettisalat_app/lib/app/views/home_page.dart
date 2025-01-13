@@ -179,21 +179,19 @@ class _HomePageState extends State<HomePage>
                 offset:
                     const Offset(0, -10), // Move the entire container upwards
                 child: Container(
-                  width: 50, // Circle diameter
-                  height: 50, // Circle diameter
+                  width: 50,
+                  height: 50,
                   decoration: BoxDecoration(
                     border: Border.all(
                         color: _tabController.index == 2
                             ? primaryColr
                             : Colors.white,
                         width: 1.5),
-                    shape: BoxShape.circle, // Circular shape
-                    color: _tabController.index == 2
-                        ? Colors.white
-                        : primaryColr, // Dynamic color
+                    shape: BoxShape.circle,
+                    color:
+                        _tabController.index == 2 ? Colors.white : primaryColr,
                     boxShadow: [
-                      if (_tabController.index ==
-                          2) // Optional: Shadow when active
+                      if (_tabController.index == 2)
                         const BoxShadow(
                           color: Colors.black12,
                           blurRadius: 10,

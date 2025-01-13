@@ -26,7 +26,7 @@ class EttisalatApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
-      initialRoute: AppRoutes.HOME,
+      initialRoute: AppRoutes.LOGIN,
       getPages: AppRoutes.routes,
     );
   }

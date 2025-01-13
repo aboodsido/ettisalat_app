@@ -73,7 +73,6 @@ class _MapPageState extends State<MapPage> {
         ),
         Marker(
           draggable: markerSettingsController.draggableIcons.value,
-
           onDragEnd: ((newPosition) {
             print(newPosition.latitude);
             print(newPosition.longitude);
@@ -82,8 +81,7 @@ class _MapPageState extends State<MapPage> {
             print('Tapped');
           },
           markerId: const MarkerId('host2'),
-          position: const LatLng(
-              31.23, 34.125), // Replace with actual host coordinates
+          position: const LatLng(31.23, 34.125),
           infoWindow: const InfoWindow(title: 'Host 2'),
           icon: customIcon,
         ),
