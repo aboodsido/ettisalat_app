@@ -2,10 +2,10 @@ import 'package:ettisalat_app/app/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../controllers/login_controller.dart';
+import '../controllers/auth_controller.dart';
 
 class LoginPage extends StatelessWidget {
-  final LoginController controller = Get.find();
+  final AuthController controller = Get.find();
 
   LoginPage({super.key});
 
@@ -89,7 +89,7 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               const Center(
-                child: Image(image: AssetImage('assets/images/logo.jpeg')),
+                child: Image(image: AssetImage('assets/images/jawwalLogo.png')),
               ),
             ],
           ),

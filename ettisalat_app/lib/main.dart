@@ -5,8 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app/bindings/initial_binding.dart';
 import 'app/routes/app_routes.dart';
 
-void main() {
-  runApp(const EttisalatApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(EttisalatApp());
 }
 
 class EttisalatApp extends StatelessWidget {
@@ -17,16 +19,14 @@ class EttisalatApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Ettisalat App',
       theme: ThemeData(
-        // primarySwatch: Colors.deepOrange,
         textTheme: GoogleFonts.tajawalTextTheme(),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromRGBO(243, 243, 249, 1),
-          // primary: Colors.blue,
         ),
       ),
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
-      initialRoute: AppRoutes.LOGIN,
+      initialRoute: AppRoutes.SPLASH,
       getPages: AppRoutes.routes,
     );
   }

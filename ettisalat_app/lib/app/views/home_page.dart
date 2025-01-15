@@ -235,7 +235,7 @@ class _HomePageState extends State<HomePage>
             const UsersPage(),
             const MapPage(),
             DevicesPage(),
-            const MorePage(),
+            MorePage(),
           ],
         ),
       ),

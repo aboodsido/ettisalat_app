@@ -1,34 +1,54 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class LoginController extends GetxController {
+import '../constants.dart';
+
+class AuthController extends GetxController {
   var email = ''.obs;
   var password = ''.obs;
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
+  final String loginUrl = '$baseUrl/auth/login';
+    AuthController() {
+    print("AuthController initialized");
+  }
 
-  // Define the login API URL
-  final String loginUrl =
-      'http://monitoring.ocean-it.net/api/auth/login'; // Update with your actual API URL
+  @override
+  void onInit() {
+    super.onInit();
+    checkLoggedInStatus();
+  }
 
+  // Check if the user is already logged in
+  void checkLoggedInStatus() async {
+    String? token = await storage.read(key: 'auth_token');
+
+    if (token != null) {
+      // Token exists, navigate to the home screen
+      Get.offNamed('/home');
+    } else {
+      // No token found, stay on the login screen
+      print('No token found, redirecting to login.');
+    }
+  }
+
+  // Login method
   void login() async {
     if (email.isNotEmpty && password.isNotEmpty) {
-      // Create the body of the request
       Map<String, String> body = {
         'email': email.value,
         'password': password.value,
       };
 
       try {
-        // Make the API request
         var response = await http.post(
           Uri.parse(loginUrl),
           body: body,
         );
 
-        // Check if the request was successful
         if (response.statusCode == 200) {
           var data = json.decode(response.body);
 
@@ -83,5 +103,38 @@ class LoginController extends GetxController {
         ),
       );
     }
+  }
+
+  // Logout method
+  void logout() async {
+    // Show confirmation dialog before logging out
+    Get.dialog(
+      AlertDialog(
+        title: const Text("Confirm Logout"),
+        content: const Text("Are you sure you want to logout?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              // Clear stored token and user data
+              await storage.deleteAll();
+
+              Get.offAllNamed('/login');
+
+              Get.back();
+            },
+            child: const Text(
+              "Logout",
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

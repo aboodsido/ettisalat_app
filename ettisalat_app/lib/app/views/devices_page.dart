@@ -4,7 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../controllers/device_controller.dart';
+import 'add_device_page.dart';
 import 'settings_page.dart';
+import 'update_device_page.dart';
 
 class DevicesPage extends StatelessWidget {
   final DeviceController deviceController = Get.put(DeviceController());
@@ -46,12 +48,20 @@ class DevicesPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-              child: Row(
-                children: [
-                  buildCountCard('300', Colors.green),
-                  buildCountCard('50', Colors.orangeAccent),
-                  buildCountCard('0', Colors.red),
-                ],
+              child: Obx(
+                () => Row(
+                  children: [
+                    buildCountCard(
+                        '${deviceController.devices.where((device) => device.status == '1').length}',
+                        Colors.green),
+                    buildCountCard(
+                        '${deviceController.devices.where((device) => device.status == '2').length}',
+                        Colors.orangeAccent),
+                    buildCountCard(
+                        '${deviceController.devices.where((device) => device.status == '3').length}',
+                        Colors.red),
+                  ],
+                ),
               ),
             ),
             const Padding(
@@ -93,9 +103,16 @@ class DevicesPage extends StatelessWidget {
                     return Card(
                       elevation: 2,
                       margin: const EdgeInsets.only(bottom: 10),
-                      color: const Color.fromARGB(228, 243, 243, 249),
+                      color: const Color.fromARGB(241, 243, 243, 249),
                       child: ListTile(
-                        leading: buildDeviceIdBadge(device.id),
+                        leading: buildDeviceIdBadge(
+                          device.id,
+                          device.status == '1'
+                              ? Colors.green
+                              : device.status == '2'
+                                  ? Colors.orangeAccent
+                                  : Colors.red,
+                        ),
                         title: Row(
                           children: [
                             Text(
@@ -115,7 +132,7 @@ class DevicesPage extends StatelessWidget {
                           ],
                         ),
                         subtitle: Text(
-                          "${device.lineCode}      Group: ${device.deviceType}",
+                          "${device.lineCode}      Type: ${device.deviceType}",
                           style: const TextStyle(color: Colors.grey),
                         ),
                         trailing: buildTrailingActions(device.id),
@@ -125,6 +142,38 @@ class DevicesPage extends StatelessWidget {
                 );
               }),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: primaryColr,
+                    ),
+                    onPressed: () {
+                      deviceController.previousPage();
+                    },
+                  ),
+                  Obx(() {
+                    return Text(
+                      'Page ${deviceController.currentPage.value} of ${deviceController.totalPages.value}',
+                      style: const TextStyle(fontSize: 16, color: primaryColr),
+                    );
+                  }),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.arrow_forward,
+                      color: primaryColr,
+                    ),
+                    onPressed: () {
+                      deviceController.nextPage();
+                    },
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -132,7 +181,7 @@ class DevicesPage extends StatelessWidget {
         backgroundColor: primaryColr,
         child: const Icon(Icons.add, color: Colors.white),
         onPressed: () {
-          // Navigate to the device addition page
+          Get.to(const AddDevicePage());
         },
       ),
     );
@@ -142,7 +191,7 @@ class DevicesPage extends StatelessWidget {
     return TextField(
       controller: searchController,
       decoration: InputDecoration(
-        hintText: 'Search devices...',
+        hintText: 'Search devices by name or IP...',
         prefixIcon: const Icon(Icons.search, color: primaryColr),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -165,13 +214,10 @@ class DevicesPage extends StatelessWidget {
     );
   }
 
-  Widget buildDeviceIdBadge(int id) {
+  Widget buildDeviceIdBadge(int id, Color color) {
     return CircleAvatar(
-      backgroundColor: Colors.blue.shade100,
-      child: Text(
-        id.toString(),
-        style: const TextStyle(color: Colors.black, fontSize: 12),
-      ),
+      radius: 7,
+      backgroundColor: color,
     );
   }
 
@@ -179,29 +225,78 @@ class DevicesPage extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        IconButton(
-          tooltip: 'Edit Device',
-          icon: SvgPicture.asset(
-            'assets/icons/edit.svg',
-            width: 15,
-            height: 15,
+        Container(
+          width: 35,
+          height: 35,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
           ),
-          onPressed: () {
-            // Edit device logic here
-          },
+          child: IconButton(
+            tooltip: 'Edit Device',
+            icon: SvgPicture.asset(
+              'assets/icons/edit.svg',
+              width: 15,
+              height: 15,
+            ),
+            onPressed: () {
+              final device = deviceController.devices
+                  .firstWhere((device) => device.id == id);
+              // Navigate to the Update Device page with the selected device's data
+              Get.to(UpdateDevicePage(device: device));
+            },
+          ),
         ),
-        IconButton(
-          tooltip: 'Delete Device',
-          icon: SvgPicture.asset(
-            'assets/icons/delete.svg',
-            width: 15,
-            height: 15,
+        const SizedBox(width: 5),
+        Container(
+          width: 35,
+          height: 35,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
           ),
-          onPressed: () {
-            // deviceController.deleteDeviceAPI(id);
-          },
+          child: IconButton(
+            tooltip: 'Delete Device',
+            icon: SvgPicture.asset(
+              'assets/icons/delete.svg',
+              width: 15,
+              height: 15,
+            ),
+            onPressed: () {
+              _showDeleteConfirmationDialog(id);
+            },
+          ),
         ),
       ],
+    );
+  }
+
+  void _showDeleteConfirmationDialog(int deviceId) {
+    Get.dialog(
+      AlertDialog(
+        title: const Text("Delete Confirm"),
+        content: const Text("Are you sure you want to delete this device?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Close the dialog and do nothing
+              Get.back();
+            },
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              deviceController.deleteDevice(deviceId.toString());
+              Get.back();
+            },
+            child: const Text(
+              "Delete",
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
     );
   }
 
@@ -219,7 +314,7 @@ class DevicesPage extends StatelessWidget {
                 radius: 5,
               ),
               const SizedBox(height: 5),
-              Text('$count hosts'),
+              Text('$count devices'),
             ],
           ),
         ),

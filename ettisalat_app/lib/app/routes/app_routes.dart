@@ -19,12 +19,12 @@ class AppRoutes {
   static const DASHBOARD = '/dashboard';
 
   static final routes = [
-    GetPage(name: SPLASH, page: () => SplashPage()),
+    GetPage(name: SPLASH, page: () => const SplashPage()),
     GetPage(name: LOGIN, page: () => LoginPage()),
     GetPage(name: HOME, page: () => const HomePage()),
     GetPage(name: HOSTS, page: () => DevicesPage()),
     GetPage(name: USERS, page: () => const UsersPage()),
     GetPage(name: SETTINGS, page: () => const SettingsPage()),
-    GetPage(name: MORE, page: () => const MorePage()),
+    GetPage(name: MORE, page: () => MorePage()),
   ];
 }
