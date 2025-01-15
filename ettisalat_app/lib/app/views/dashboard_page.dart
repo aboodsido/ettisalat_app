@@ -1,3 +1,4 @@
+import 'package:ettisalat_app/app/controllers/device_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -5,8 +6,9 @@ import '../services/dashboard_card.dart';
 import 'settings_page.dart';
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  DeviceController deviceController = Get.find();
 
+  DashboardPage({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,41 +33,45 @@ class DashboardPage extends StatelessWidget {
           ),
         ),
         padding: const EdgeInsets.all(16), // Padding around the column
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 10,
-            ),
-            buildCard(
-              title: "HOSTS",
-              number: "250",
-              icon: Icons.wifi,
-              color: const Color(0xFFD8ECF7), // First card color
-              circleColor: const Color(0xFF00A1D3),
-            ),
-            buildCard(
-              title: "OPERATIONAL",
-              number: "221",
-              icon: Icons.wifi,
-              color: const Color(0xFFE0F8E0), // Second card color
-
-              circleColor: const Color(0xFF3CD653),
-            ),
-            buildCard(
-              title: "OFFLINE SHORT TERM",
-              number: "25",
-              icon: Icons.wifi,
-              color: const Color(0xFFFFEBE4), // Third card color
-              circleColor: const Color(0xFFFC9375),
-            ),
-            buildCard(
-              title: "OFFLINE LONG TERM",
-              number: "4",
-              icon: Icons.wifi,
-              color: const Color(0xFFFFE0E5),
-              circleColor: const Color(0xFFF95979),
-            ),
-          ],
+        child: Obx(
+          () => Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              buildCard(
+                title: "DEVICES",
+                number: "${deviceController.devices.length}",
+                icon: Icons.wifi,
+                color: const Color(0xFFD8ECF7),
+                circleColor: const Color(0xFF00A1D3),
+              ),
+              buildCard(
+                title: "OPERATIONAL",
+                number:
+                    "${deviceController.devices.where((device) => device.status == '1').length}",
+                icon: Icons.wifi,
+                color: const Color(0xFFE0F8E0),
+                circleColor: const Color(0xFF3CD653),
+              ),
+              buildCard(
+                title: "OFFLINE SHORT TERM",
+                number:
+                    "${deviceController.devices.where((device) => device.status == '2').length}",
+                icon: Icons.wifi,
+                color: const Color(0xFFFFEBE4),
+                circleColor: const Color(0xFFFC9375),
+              ),
+              buildCard(
+                title: "OFFLINE LONG TERM",
+                number:
+                    "${deviceController.devices.where((device) => device.status == '3').length}",
+                icon: Icons.wifi,
+                color: const Color(0xFFFFE0E5),
+                circleColor: const Color(0xFFF95979),
+              ),
+            ],
+          ),
         ),
       ),
     );

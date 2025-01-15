@@ -1,6 +1,5 @@
-import 'package:ettisalat_app/app/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../controllers/user_controller.dart';
@@ -13,6 +12,9 @@ class UsersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserController userController = Get.put(UserController());
+
+    // Fetch the users when the page is first built
+    userController.fetchUsers();
 
     return Scaffold(
       appBar: AppBar(
@@ -31,116 +33,124 @@ class UsersPage extends StatelessWidget {
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50), // Adjust radius as needed
-            topRight: Radius.circular(50), // Adjust radius as needed
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
           ),
         ),
         child: Obx(
-          () => Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: userController.users.length,
-              itemBuilder: (context, index) {
-                final user = userController.users[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: NetworkImage(user.imageUrl),
-                          radius: 30,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+          () {
+            if (userController.isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            return Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: userController.users.length,
+                itemBuilder: (context, index) {
+                  final user = userController.users[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(user.image),
+                            radius: 30,
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${user.firstName} ${user.lastName}',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  user.companyEmail,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  user.phone,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Row(
                             children: [
-                              Text(
-                                user.name,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue,
+                              Container(
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: IconButton(
+                                  onPressed: () {
+                                    // Edit user action
+                                  },
+                                  icon: SvgPicture.asset(
+                                    'assets/icons/edit.svg',
+                                    width: 17,
+                                    height: 17,
+                                  ),
+                                  tooltip: "Edit User",
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                user.email,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
+                              const SizedBox(width: 5),
+                              Container(
+                                width: 35,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                user.phone,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
+                                child: IconButton(
+                                  onPressed: () =>
+                                      userController.deleteUser(user.id),
+                                  icon: SvgPicture.asset(
+                                    'assets/icons/delete.svg',
+                                    width: 17,
+                                    height: 17,
+                                  ),
+                                  tooltip: "Delete User",
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 35,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: IconButton(
-                                onPressed: () => userController.editUser(index),
-                                icon: SvgPicture.asset(
-                                  'assets/icons/edit.svg',
-                                  width: 17,
-                                  height: 17,
-                                ),
-                                tooltip: "Edit User",
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            Container(
-                              width: 35,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: IconButton(
-                                onPressed: () =>
-                                    userController.deleteUser(index),
-                                icon: SvgPicture.asset(
-                                  'assets/icons/delete.svg',
-                                  width: 17,
-                                  height: 17,
-                                ),
-                                tooltip: "Delete User",
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
+                  );
+                },
+              ),
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: primaryColr,
+        backgroundColor: const Color(0xFF00A1D3),
         onPressed: () {
           Get.to(
             () => AddUserPage(

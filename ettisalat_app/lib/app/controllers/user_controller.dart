@@ -1,75 +1,74 @@
+import 'package:ettisalat_app/app/constants.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../models/user_model.dart';
 
 class UserController extends GetxController {
   var users = <UserModel>[].obs; // Reactive list for user data
   var isLoading = false.obs; // Track loading state
+  final storage = const FlutterSecureStorage();
 
-  @override
-  void onInit() {
-    super.onInit();
-    loadDummyData(); // Load dummy data initially
-    // fetchUsersFromApi(); // Uncomment to load data from API
-  }
-
-  // Load dummy data for now
-  void loadDummyData() {
-    users.value = [
-      UserModel(
-        name: "Abdullah Abosido",
-        email: "abdullah@example.com",
-        phone: "123-456-7890",
-        imageUrl: "https://via.placeholder.com/150",
-      ),
-      UserModel(
-        name: "Taher Samara",
-        email: "tsamara@example.com",
-        phone: "987-654-3210",
-        imageUrl: "https://via.placeholder.com/150",
-      ),
-    ];
-  }
-
-  // Simulate API fetching (replace this with your API logic)
-  Future<void> fetchUsersFromApi() async {
+  // Fetch users from API
+  Future<void> fetchUsers() async {
     try {
+      String? authToken = await storage.read(
+          key: 'auth_token'); // Replace with your storage method
+
+      if (authToken == null) {
+        Get.snackbar("Error", "No token found, please login again.");
+        return;
+      }
+
       isLoading(true);
-      // Simulate a delay (replace with actual API call)
-      await Future.delayed(const Duration(seconds: 2));
 
-      // Replace with the actual response from your API
-      List<Map<String, dynamic>> apiResponse = [
-        {
-          "name": "Alice Johnson",
-          "email": "alice.johnson@example.com",
-          "phone": "555-123-4567",
-          "imageUrl": "https://via.placeholder.com/150",
+      final response = await http.get(
+        Uri.parse('$baseUrl/users/list'),
+        headers: {
+          "Authorization": "Bearer $authToken",
         },
-        {
-          "name": "Bob Williams",
-          "email": "bob.williams@example.com",
-          "phone": "444-987-6543",
-          "imageUrl": "https://via.placeholder.com/150",
-        },
-      ];
+      );
 
-      // Parse API response and update the user list
-      users.value =
-          apiResponse.map((json) => UserModel.fromJson(json)).toList();
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body)['data']['data'] as List;
+        users.value = data.map((user) => UserModel.fromJson(user)).toList();
+      } else {
+        Get.snackbar("Error", "Failed to load users");
+      }
     } catch (e) {
-      Get.snackbar("Error", "Failed to fetch users: $e");
+      print(e);
+      Get.snackbar("Error", "An error occurred: $e");
     } finally {
       isLoading(false);
     }
   }
 
-  void deleteUser(int index) {
-    users.removeAt(index);
-  }
+  // Delete a user
+  Future<void> deleteUser(int userId) async {
+    try {
+      String? authToken = await storage.read(key: 'auth_token');
 
-  void editUser(int index) {
-    Get.snackbar(
-        "Edit User", "Edit functionality for user: ${users[index].name}");
+      if (authToken == null) {
+        Get.snackbar("Error", "No token found, please login again.");
+        return;
+      }
+
+      final response = await http.delete(
+        Uri.parse('$baseUrl/users/delete/$userId'),
+        headers: {
+          "Authorization": "Bearer $authToken",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar("Success", "User deleted successfully!");
+        fetchUsers(); // Refresh the users list after deletion
+      } else {
+        Get.snackbar("Error", "Failed to delete user.");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An error occurred: $e");
+    }
   }
 }
