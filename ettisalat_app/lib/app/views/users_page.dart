@@ -163,8 +163,7 @@ class UsersPage extends StatelessWidget {
                     title: "Add New User",
                     buttonText: "Save",
                     onSave: (userData) async {
-                      // Perform your POST request here
-                      // Example:
+                      await Get.find<UserController>().addUser(userData);
                       print(userData);
                       Get.snackbar("Success", "User added successfully!");
                     },
