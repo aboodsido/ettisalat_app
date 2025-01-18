@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../controllers/device_controller.dart';
+import '../services/permission_manager.dart';
 import 'add_device_page.dart';
 import 'settings_page.dart';
 import 'update_device_page.dart';
@@ -12,6 +13,7 @@ class DevicesPage extends StatelessWidget {
   final DeviceController deviceController = Get.put(DeviceController());
   final TextEditingController searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
+  final PermissionManager permissionManager = Get.find<PermissionManager>();
 
   DevicesPage({super.key});
 
@@ -177,13 +179,15 @@ class DevicesPage extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: primaryColr,
-        child: const Icon(Icons.add, color: Colors.white),
-        onPressed: () {
-          Get.to(const AddDevicePage());
-        },
-      ),
+      floatingActionButton: permissionManager.hasPermission('ADD_DEVICE')
+          ? FloatingActionButton(
+              backgroundColor: primaryColr,
+              child: const Icon(Icons.add, color: Colors.white),
+              onPressed: () {
+                Get.to(const AddDevicePage());
+              },
+            )
+          : null,
     );
   }
 
@@ -225,48 +229,50 @@ class DevicesPage extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: 35,
-          height: 35,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: IconButton(
-            tooltip: 'Edit Device',
-            icon: SvgPicture.asset(
-              'assets/icons/edit.svg',
-              width: 15,
-              height: 15,
+        if (permissionManager.hasPermission('EDIT_DEVICE'))
+          Container(
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
             ),
-            onPressed: () {
-              final device = deviceController.devices
-                  .firstWhere((device) => device.id == id);
-              // Navigate to the Update Device page with the selected device's data
-              Get.to(UpdateDevicePage(device: device));
-            },
+            child: IconButton(
+              tooltip: 'Edit Device',
+              icon: SvgPicture.asset(
+                'assets/icons/edit.svg',
+                width: 15,
+                height: 15,
+              ),
+              onPressed: () {
+                final device = deviceController.devices
+                    .firstWhere((device) => device.id == id);
+                // Navigate to the Update Device page with the selected device's data
+                Get.to(UpdateDevicePage(device: device));
+              },
+            ),
           ),
-        ),
         const SizedBox(width: 5),
-        Container(
-          width: 35,
-          height: 35,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: IconButton(
-            tooltip: 'Delete Device',
-            icon: SvgPicture.asset(
-              'assets/icons/delete.svg',
-              width: 15,
-              height: 15,
+        if (permissionManager.hasPermission('DELETE_DEVICE'))
+          Container(
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
             ),
-            onPressed: () {
-              _showDeleteConfirmationDialog(id);
-            },
+            child: IconButton(
+              tooltip: 'Delete Device',
+              icon: SvgPicture.asset(
+                'assets/icons/delete.svg',
+                width: 15,
+                height: 15,
+              ),
+              onPressed: () {
+                _showDeleteConfirmationDialog(id);
+              },
+            ),
           ),
-        ),
       ],
     );
   }

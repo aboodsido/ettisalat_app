@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../controllers/user_controller.dart';
+import '../services/permission_manager.dart';
 import 'add_user_page.dart';
 import 'settings_page.dart';
 
@@ -12,6 +13,7 @@ class UsersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserController userController = Get.put(UserController());
+    final PermissionManager permissionManager = Get.find<PermissionManager>();
 
     // Fetch the users when the page is first built
     userController.fetchUsers();
@@ -99,44 +101,47 @@ class UsersPage extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              Container(
-                                width: 35,
-                                height: 35,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: IconButton(
-                                  onPressed: () {
-                                    // Edit user action
-                                  },
-                                  icon: SvgPicture.asset(
-                                    'assets/icons/edit.svg',
-                                    width: 17,
-                                    height: 17,
+                              if (permissionManager.hasPermission('EDIT_USER'))
+                                Container(
+                                  width: 35,
+                                  height: 35,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                  tooltip: "Edit User",
+                                  child: IconButton(
+                                    onPressed: () {
+                                      // Edit user action
+                                    },
+                                    icon: SvgPicture.asset(
+                                      'assets/icons/edit.svg',
+                                      width: 17,
+                                      height: 17,
+                                    ),
+                                    tooltip: "Edit User",
+                                  ),
                                 ),
-                              ),
                               const SizedBox(width: 5),
-                              Container(
-                                width: 35,
-                                height: 35,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: IconButton(
-                                  onPressed: () =>
-                                      userController.deleteUser(user.id),
-                                  icon: SvgPicture.asset(
-                                    'assets/icons/delete.svg',
-                                    width: 17,
-                                    height: 17,
+                              if (permissionManager
+                                  .hasPermission('DELETE_USER'))
+                                Container(
+                                  width: 35,
+                                  height: 35,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                  tooltip: "Delete User",
+                                  child: IconButton(
+                                    onPressed: () =>
+                                        userController.deleteUser(user.id),
+                                    icon: SvgPicture.asset(
+                                      'assets/icons/delete.svg',
+                                      width: 17,
+                                      height: 17,
+                                    ),
+                                    tooltip: "Delete User",
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                         ],
@@ -149,27 +154,29 @@ class UsersPage extends StatelessWidget {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF00A1D3),
-        onPressed: () {
-          Get.to(
-            () => AddUserPage(
-              title: "Add New User",
-              buttonText: "Save",
-              onSave: (userData) async {
-                // Perform your POST request here
-                // Example:
-                print(userData);
-                Get.snackbar("Success", "User added successfully!");
+      floatingActionButton: permissionManager.hasPermission('ADD_USER')
+          ? FloatingActionButton(
+              backgroundColor: const Color(0xFF00A1D3),
+              onPressed: () {
+                Get.to(
+                  () => AddUserPage(
+                    title: "Add New User",
+                    buttonText: "Save",
+                    onSave: (userData) async {
+                      // Perform your POST request here
+                      // Example:
+                      print(userData);
+                      Get.snackbar("Success", "User added successfully!");
+                    },
+                  ),
+                );
               },
-            ),
-          );
-        },
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
+              child: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+            )
+          : null,
     );
   }
 }

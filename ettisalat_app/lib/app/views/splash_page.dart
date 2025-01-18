@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../routes/app_routes.dart';
 
@@ -9,14 +10,24 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isTokenValid(String token) {
+      try {
+        return !JwtDecoder.isExpired(token); // Check token expiry
+      } catch (e) {
+        print("DEBUG: Token validation error: $e");
+        return false; // Token is invalid
+      }
+    }
+
     // Navigate to Login screen after 3 seconds
     Future.delayed(const Duration(seconds: 3), () async {
       const FlutterSecureStorage storage = FlutterSecureStorage();
       String? authToken = await storage.read(key: 'auth_token');
-      if (authToken != null) {
-        Get.offNamed(AppRoutes.HOME); // Navigate to the Home page
+      if (authToken != null && isTokenValid(authToken)) {
+        print('the token is valid ! {$authToken}');
+        Get.offNamed(AppRoutes.HOME);
       } else {
-        Get.offNamed(AppRoutes.LOGIN); // Navigate to the Login page
+        Get.offNamed(AppRoutes.LOGIN);
       }
     });
 

@@ -9,6 +9,7 @@ class UserController extends GetxController {
   var users = <UserModel>[].obs; // Reactive list for user data
   var isLoading = false.obs; // Track loading state
   final storage = const FlutterSecureStorage();
+  
 
   // Fetch users from API
   Future<void> fetchUsers() async {
@@ -54,20 +55,25 @@ class UserController extends GetxController {
         return;
       }
 
-      final response = await http.delete(
+      final response = await http.post(
         Uri.parse('$baseUrl/users/delete/$userId'),
         headers: {
           "Authorization": "Bearer $authToken",
         },
       );
 
+      final responseBody = json.decode(response.body);
+      final message = responseBody['message'].toString();
+
       if (response.statusCode == 200) {
-        Get.snackbar("Success", "User deleted successfully!");
+        Get.snackbar("Success", message);
         fetchUsers(); // Refresh the users list after deletion
       } else {
-        Get.snackbar("Error", "Failed to delete user.");
+        print(message);
+        Get.snackbar("Error", message);
       }
     } catch (e) {
+      print(e.toString());
       Get.snackbar("Error", "An error occurred: $e");
     }
   }

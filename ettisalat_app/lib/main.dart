@@ -7,7 +7,7 @@ import 'app/routes/app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  // await Get.putAsync(() => PermissionManager().init());
   runApp(EttisalatApp());
 }
 

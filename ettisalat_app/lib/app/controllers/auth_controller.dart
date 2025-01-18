@@ -6,13 +6,14 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../constants.dart';
+import '../services/permission_manager.dart';
 
 class AuthController extends GetxController {
   var email = ''.obs;
   var password = ''.obs;
   final storage = const FlutterSecureStorage();
   final String loginUrl = '$baseUrl/auth/login';
-    AuthController() {
+  AuthController() {
     print("AuthController initialized");
   }
 
@@ -57,6 +58,12 @@ class AuthController extends GetxController {
 
           // Store the token securely
           await storage.write(key: 'auth_token', value: token);
+
+          final permissions = List<String>.from(data['data']['permissions']);
+
+          // Save permissions in the manager
+          Get.find<PermissionManager>().setPermissions(permissions);
+          print(permissions);
 
           // Optionally, store other user information if needed
           await storage.write(
@@ -123,7 +130,7 @@ class AuthController extends GetxController {
             onPressed: () async {
               // Clear stored token and user data
               await storage.deleteAll();
-
+              Get.find<PermissionManager>().clearPermissions();
               Get.offAllNamed('/login');
 
               Get.back();
