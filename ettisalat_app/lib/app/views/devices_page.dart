@@ -10,7 +10,7 @@ import 'settings_page.dart';
 import 'update_device_page.dart';
 
 class DevicesPage extends StatelessWidget {
-  final DeviceController deviceController = Get.put(DeviceController());
+  final DeviceController deviceController = Get.find();
   final TextEditingController searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
   final PermissionManager permissionManager = Get.find<PermissionManager>();
@@ -19,6 +19,8 @@ class DevicesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    deviceController.fetchDevicesAPI(deviceController.currentPage.value);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Devices'),
@@ -96,52 +98,59 @@ class DevicesPage extends StatelessWidget {
                   );
                 }
 
-                return ListView.builder(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                  itemCount: filteredDevices.length,
-                  itemBuilder: (context, index) {
-                    final device = filteredDevices[index];
-                    return Card(
-                      elevation: 2,
-                      margin: const EdgeInsets.only(bottom: 10),
-                      color: const Color.fromARGB(241, 243, 243, 249),
-                      child: ListTile(
-                        leading: buildDeviceIdBadge(
-                          device.id,
-                          device.status == '1'
-                              ? Colors.green
-                              : device.status == '2'
-                                  ? Colors.orangeAccent
-                                  : Colors.red,
+                return deviceController.isLoading.value
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: primaryColr,
                         ),
-                        title: Row(
-                          children: [
-                            Text(
-                              device.name,
-                              style: const TextStyle(
-                                  color: primaryColr,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(width: 10),
-                            Flexible(
-                              child: Text(
-                                'IP: ${device.ipAddress}',
-                                style: const TextStyle(color: Colors.black54),
-                                overflow: TextOverflow.ellipsis,
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 12),
+                        itemCount: filteredDevices.length,
+                        itemBuilder: (context, index) {
+                          final device = filteredDevices[index];
+                          return Card(
+                            elevation: 2,
+                            margin: const EdgeInsets.only(bottom: 10),
+                            color: const Color.fromARGB(241, 243, 243, 249),
+                            child: ListTile(
+                              leading: buildDeviceIdBadge(
+                                device.id,
+                                device.status == '1'
+                                    ? Colors.green
+                                    : device.status == '2'
+                                        ? Colors.orangeAccent
+                                        : Colors.red,
                               ),
+                              title: Row(
+                                children: [
+                                  Text(
+                                    device.name,
+                                    style: const TextStyle(
+                                        color: primaryColr,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Flexible(
+                                    child: Text(
+                                      'IP: ${device.ipAddress}',
+                                      style: const TextStyle(
+                                          color: Colors.black54),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              subtitle: Text(
+                                "${device.lineCode}      Type: ${device.deviceType}",
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                              trailing: buildTrailingActions(device.id),
                             ),
-                          ],
-                        ),
-                        subtitle: Text(
-                          "${device.lineCode}      Type: ${device.deviceType}",
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                        trailing: buildTrailingActions(device.id),
-                      ),
-                    );
-                  },
-                );
+                          );
+                        },
+                      );
               }),
             ),
             Padding(

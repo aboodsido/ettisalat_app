@@ -11,14 +11,13 @@ class DeviceController extends GetxController {
   var devices = <Device>[].obs;
   var currentPage = 1.obs;
   var totalPages = 1.obs;
+  var isLoading = true.obs;
 
-  // Instance of FlutterSecureStorage to read the token
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   @override
   void onInit() {
     super.onInit();
-    fetchDevicesAPI(currentPage.value);
   }
 
   Future<void> fetchDevicesAPI(int page) async {
@@ -46,14 +45,18 @@ class DeviceController extends GetxController {
           // Update the device list
           devices.value =
               devicesData.map((device) => Device.fromJson(device)).toList();
+          isLoading.value = false;
         } else {
           Get.snackbar("Error", "Failed to fetch devices");
+          isLoading.value = true;
         }
       } else {
         Get.snackbar("Error", "No token found, please login again");
       }
     } catch (e) {
       Get.snackbar("Error", e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 

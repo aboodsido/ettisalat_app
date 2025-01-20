@@ -11,6 +11,7 @@ class DashboardPage extends StatelessWidget {
   DashboardPage({super.key});
   @override
   Widget build(BuildContext context) {
+    deviceController.fetchDevicesAPI(deviceController.currentPage.value);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),

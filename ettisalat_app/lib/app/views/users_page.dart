@@ -12,7 +12,7 @@ class UsersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UserController userController = Get.put(UserController());
+    final UserController userController = Get.find();
     final PermissionManager permissionManager = Get.find<PermissionManager>();
 
     // Fetch the users when the page is first built
@@ -69,34 +69,38 @@ class UsersPage extends StatelessWidget {
                           ),
                           const SizedBox(width: 16),
                           Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${user.firstName} ${user.lastName}',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 5),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${user.firstName} ${user.lastName}',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  user.companyEmail,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    user.companyEmail,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  user.phone,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    user.phone,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                           Row(
@@ -163,8 +167,7 @@ class UsersPage extends StatelessWidget {
                     title: "Add New User",
                     buttonText: "Save",
                     onSave: (userData) async {
-                      await Get.find<UserController>().addUser(userData);
-                      print(userData);
+                      await userController.addUser(userData);
                       Get.snackbar("Success", "User added successfully!");
                     },
                   ),
