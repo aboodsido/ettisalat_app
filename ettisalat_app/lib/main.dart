@@ -4,10 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'app/bindings/initial_binding.dart';
 import 'app/routes/app_routes.dart';
+import 'app/theme_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Get.putAsync(() => PermissionManager().init());
+  Get.put(ThemeController());
   runApp(EttisalatApp());
 }
 
@@ -16,18 +17,24 @@ class EttisalatApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Ettisalat App',
-      theme: ThemeData(
-        textTheme: GoogleFonts.tajawalTextTheme(),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromRGBO(243, 243, 249, 1),
+    final themeController = Get.find<ThemeController>();
+    return Obx(
+      () => GetMaterialApp(
+        title: 'Ettisalat App',
+        theme: ThemeData(
+          textTheme: GoogleFonts.tajawalTextTheme(),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromRGBO(243, 243, 249, 1),
+          ),
         ),
+        darkTheme: ThemeData.dark(),
+        themeMode:
+            themeController.isDarkMode.value ? ThemeMode.dark : ThemeMode.light,
+        debugShowCheckedModeBanner: false,
+        initialBinding: InitialBinding(),
+        initialRoute: AppRoutes.SPLASH,
+        getPages: AppRoutes.routes,
       ),
-      debugShowCheckedModeBanner: false,
-      initialBinding: InitialBinding(),
-      initialRoute: AppRoutes.SPLASH,
-      getPages: AppRoutes.routes,
     );
   }
 }

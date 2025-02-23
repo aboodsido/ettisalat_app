@@ -10,59 +10,68 @@ import '../models/device_model.dart';
 class DeviceController extends GetxController {
   var devices = <Device>[].obs;
   var currentPage = 1.obs;
-  var totalPages = 1.obs;
+  var lastPage = 1.obs;
+  var perPage = 10.obs;
   var isLoading = true.obs;
 
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
-  @override
-  void onInit() {
-    super.onInit();
+  Future<void> fetchDevicesAPI(int page) async {
+    final authToken = await _getAuthToken();
+    if (authToken == null) {
+      _handleNoTokenError();
+      return;
+    }
+
+    final response = await _makeApiRequest(authToken, page);
+    if (response.statusCode != 200) {
+      _handleApiError(response);
+      return;
+    }
+    isLoading.value = false;
+    final jsonData = json.decode(response.body);
+    _updateDevices(jsonData);
+    _updatePagination(jsonData);
   }
 
-  Future<void> fetchDevicesAPI(int page) async {
-    try {
-      // Get the token from secure storage
-      String? authToken = await storage.read(key: 'auth_token');
+  Future<String?> _getAuthToken() async {
+    return await storage.read(key: 'auth_token');
+  }
 
-      if (authToken != null) {
-        final response = await http.get(
-          Uri.parse('$baseUrl/devices/list?page=$page'),
-          headers: {
-            "Authorization": "Bearer $authToken",
-            "Content-Type": "application/json",
-          },
-        );
+  Future<http.Response> _makeApiRequest(String authToken, int page) async {
+    final url = Uri.parse('$baseUrl/devices/list?page=$page');
+    final headers = {
+      "Authorization": "Bearer $authToken",
+      "Content-Type": "application/json",
+    };
+    return await http.get(url, headers: headers);
+  }
 
-        if (response.statusCode == 200) {
-          final jsonData = json.decode(response.body);
-          final List<dynamic> devicesData = jsonData['data']['data'];
+  void _handleNoTokenError() {
+    Get.snackbar("Error", "No token found, please login again");
+  }
 
-          // Update the pagination data
-          currentPage.value = jsonData['data']['current_page'];
-          totalPages.value = jsonData['data']['last_page'];
+  void _handleApiError(http.Response response) {
+    Get.snackbar("Error", "Failed to fetch devices");
+  }
 
-          // Update the device list
-          devices.value =
-              devicesData.map((device) => Device.fromJson(device)).toList();
-          isLoading.value = false;
-        } else {
-          Get.snackbar("Error", "Failed to fetch devices");
-          isLoading.value = true;
-        }
-      } else {
-        Get.snackbar("Error", "No token found, please login again");
-      }
-    } catch (e) {
-      Get.snackbar("Error", e.toString());
-    } finally {
-      isLoading.value = false;
-    }
+  void _updateDevices(dynamic jsonData) {
+    final devicesData = jsonData['data']['data'];
+    devices.value =
+        devicesData.map((device) => Device.fromJson(device)).toList().cast<Device>();
+  }
+
+  void _updatePagination(dynamic jsonData) {
+    currentPage.value = jsonData['data']['current_page'];
+    lastPage.value =
+        (jsonData['data']['total_records'] / jsonData['data']['per_page'])
+            .ceil();
+    perPage.value = jsonData['data']['per_page'];
   }
 
   // Method to load the next page
   void nextPage() {
-    if (currentPage.value < totalPages.value) {
+    if (currentPage.value < lastPage.value) {
       currentPage.value++;
       fetchDevicesAPI(currentPage.value);
     }

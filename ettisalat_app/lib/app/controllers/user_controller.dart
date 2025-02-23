@@ -85,9 +85,60 @@ class UserController extends GetxController {
 
       if (response.statusCode == 200) {
         Get.snackbar("Success", "User added successfully!");
-        fetchUsers(); // Refresh users list after adding new user
+        fetchUsers();
       } else {
         Get.snackbar("Error", "Failed to add user: ${response.statusCode}");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An error occurred: $e");
+    }
+  }
+
+  // Update User
+  Future<void> updateUser(int userId, Map<String, dynamic> userData) async {
+    try {
+      String? authToken = await storage.read(key: 'auth_token');
+
+      if (authToken == null) {
+        Get.snackbar("Error", "No token found, please login again.");
+        return;
+      }
+
+      var uri = Uri.parse('$baseUrl/users/edit/$userId');
+      var request = http.MultipartRequest('POST', uri)
+        ..headers.addAll({
+          "Authorization": "Bearer $authToken",
+        });
+
+      request.fields['first_name'] = userData["first_name"];
+      request.fields['middle_name'] = userData["middle_name"];
+      request.fields['last_name'] = userData["last_name"];
+      request.fields['personal_email'] = userData["personal_email"];
+      request.fields['company_email'] = userData["company_email"];
+      request.fields['phone'] = userData["phone"];
+      request.fields['marital_status'] = userData["marital_status"] ?? "";
+      request.fields['role_id'] = userData["role_id"].toString();
+      request.fields['receives_emails'] =
+          userData["receives_emails"].toString();
+      request.fields['email_frequency'] = userData["email_frequency"];
+      request.fields['address'] = userData["address"];
+
+      if (userData["image"]?.isNotEmpty ?? false) {
+        var imageFile = File(userData["image"]!);
+        request.files
+            .add(await http.MultipartFile.fromPath('image', imageFile.path));
+      }
+
+      var response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+      final responseJson = json.decode(responseBody);
+
+      if (response.statusCode == 200) {
+        print(responseJson['message']);
+        Get.snackbar("Success", responseJson['message']);
+        fetchUsers(); // Refresh the users list
+      } else {
+        Get.snackbar("Error", "Failed to update user: ${response.statusCode}");
       }
     } catch (e) {
       Get.snackbar("Error", "An error occurred: $e");

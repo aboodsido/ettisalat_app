@@ -22,7 +22,10 @@ class AppRoutes {
     GetPage(name: SPLASH, page: () => const SplashPage()),
     GetPage(name: LOGIN, page: () => LoginPage()),
     GetPage(name: HOME, page: () => const HomePage()),
-    GetPage(name: HOSTS, page: () => DevicesPage()),
+    GetPage(
+      name: HOSTS,
+      page: () => DevicesPage(status: null),
+    ),
     GetPage(name: USERS, page: () => const UsersPage()),
     GetPage(name: SETTINGS, page: () => const SettingsPage()),
     GetPage(name: MORE, page: () => MorePage()),

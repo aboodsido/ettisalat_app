@@ -131,7 +131,7 @@ class _HomePageState extends State<HomePage>
             DashboardPage(),
             const UsersPage(),
             const MapPage(),
-            DevicesPage(),
+            DevicesPage(status: null,),
             MorePage(),
           ],
         ),

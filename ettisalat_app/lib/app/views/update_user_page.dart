@@ -9,23 +9,25 @@ import 'package:image_picker/image_picker.dart';
 
 import '../constants.dart';
 
-class AddUserPage extends StatefulWidget {
+class UpdateUserPage extends StatefulWidget {
   final String title;
   final String buttonText;
-  final Function(Map<String, dynamic>) onSave;
+  final Map<String, dynamic> userData; // Existing user data to pre-fill
+  final Function(Map<String, dynamic>) onUpdate;
 
-  const AddUserPage({
+  const UpdateUserPage({
     super.key,
     required this.title,
     required this.buttonText,
-    required this.onSave,
+    required this.userData,
+    required this.onUpdate,
   });
 
   @override
-  State<AddUserPage> createState() => _AddUserPageState();
+  State<UpdateUserPage> createState() => _UpdateUserPageState();
 }
 
-class _AddUserPageState extends State<AddUserPage> {
+class _UpdateUserPageState extends State<UpdateUserPage> {
   // Controllers
   final controllers = {
     'firstName': TextEditingController(),
@@ -53,6 +55,24 @@ class _AddUserPageState extends State<AddUserPage> {
   void initState() {
     super.initState();
     fetchRoles();
+    _prefillUserData(); // Pre-fill fields with existing user data
+  }
+
+  // Pre-fill fields with existing user data
+  void _prefillUserData() {
+    final userData = widget.userData;
+    controllers['firstName']!.text = userData['first_name'] ?? '';
+    controllers['middleName']!.text = userData['middle_name'] ?? '';
+    controllers['lastName']!.text = userData['last_name'] ?? '';
+    controllers['personalEmail']!.text = userData['personal_email'] ?? '';
+    controllers['companyEmail']!.text = userData['company_email'] ?? '';
+    controllers['phone']!.text = userData['phone'] ?? '';
+    controllers['emailFrequency']!.text = userData['email_frequency'] ?? '';
+    controllers['address']!.text = userData['address'] ?? '';
+    selectedMaritalStatus = userData['marital_status'] ?? "Single";
+    selectedRoleId = userData['role_id'];
+    selectedReceiveEmails = userData['receives_emails'] == "true" ||
+        userData['receives_emails'] == true;
   }
 
   Future<void> fetchRoles() async {
@@ -167,17 +187,29 @@ class _AddUserPageState extends State<AddUserPage> {
     );
   }
 
-  Widget _buildDropdown(String label, List<dynamic> items,
-      Function(dynamic) onChanged, dynamic value) {
+  Widget _buildDropdown(
+    String label,
+    List<dynamic> items,
+    Function(dynamic) onChanged,
+    dynamic value,
+  ) {
+    // Ensure the value exists in the items list
+    if (!items.contains(value)) {
+      value =
+          items.isNotEmpty ? items.first : null; // Default to the first item
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(label),
         DropdownButtonFormField<dynamic>(
-          value: value,
+          value: value, // Ensure this value exists in the items list
           items: items
-              .map((item) =>
-                  DropdownMenuItem(value: item, child: Text(item.toString())))
+              .map((item) => DropdownMenuItem(
+                    value: item,
+                    child: Text(item.toString()),
+                  ))
               .toList(),
           onChanged: onChanged,
           decoration: _inputDecoration(),
@@ -188,15 +220,21 @@ class _AddUserPageState extends State<AddUserPage> {
   }
 
   Widget _buildRoleDropdown() {
+    if (isLoadingRoles) {
+      return const CircularProgressIndicator(); // Show a loader while roles are loading
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel("Select Role"),
         DropdownButtonFormField<dynamic>(
-          value: selectedRoleId,
+          value: selectedRoleId ?? roles.first['id'],
           items: roles
               .map((role) => DropdownMenuItem(
-                  value: role['id'], child: Text(role['name'])))
+                    value: role['id'],
+                    child: Text(role['name']),
+                  ))
               .toList(),
           onChanged: (value) {
             setState(() {
@@ -261,9 +299,9 @@ class _AddUserPageState extends State<AddUserPage> {
               "receives_emails": selectedReceiveEmails,
               "email_frequency": controllers['emailFrequency']!.text,
               "address": controllers['address']!.text,
-              "image": selectedImage?.path ?? "",
+              "image": selectedImage?.path ?? widget.userData['image'],
             };
-            widget.onSave(userData);
+            widget.onUpdate(userData);
             Get.back();
           } else {
             Get.snackbar(

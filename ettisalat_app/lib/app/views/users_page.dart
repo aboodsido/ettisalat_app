@@ -6,6 +6,7 @@ import '../controllers/user_controller.dart';
 import '../services/permission_manager.dart';
 import 'add_user_page.dart';
 import 'settings_page.dart';
+import 'update_user_page.dart';
 
 class UsersPage extends StatelessWidget {
   const UsersPage({super.key});
@@ -114,8 +115,35 @@ class UsersPage extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: IconButton(
-                                    onPressed: () {
-                                      // Edit user action
+                                    onPressed: () async {
+                                      // Navigate to the UpdateUserPage
+                                      final userData = {
+                                        "first_name": user.firstName,
+                                        "middle_name": user.middleName,
+                                        "last_name": user.lastName,
+                                        "personal_email": user.personalEmail,
+                                        "company_email": user.companyEmail,
+                                        "phone": user.phone,
+                                        "marital_status": user.maritalStatus,
+                                        "receives_emails": user.receivesEmails,
+                                        "email_frequency":
+                                            user.emailFrequencyHours,
+                                        "address": user.address,
+                                      };
+
+                                      // Pass the current user data to the UpdateUserPage
+                                      Get.to(
+                                        () => UpdateUserPage(
+                                          userData: userData,
+                                          onUpdate: (updatedUserData) async {
+                                            // Call the updateUser method from the controller
+                                            await userController.updateUser(
+                                                user.id, updatedUserData);
+                                          },
+                                          title: 'Update User Data',
+                                          buttonText: 'Update',
+                                        ),
+                                      );
                                     },
                                     icon: SvgPicture.asset(
                                       'assets/icons/edit.svg',
@@ -165,7 +193,7 @@ class UsersPage extends StatelessWidget {
                 Get.to(
                   () => AddUserPage(
                     title: "Add New User",
-                    buttonText: "Save",
+                    buttonText: "Add User",
                     onSave: (userData) async {
                       await userController.addUser(userData);
                       Get.snackbar("Success", "User added successfully!");

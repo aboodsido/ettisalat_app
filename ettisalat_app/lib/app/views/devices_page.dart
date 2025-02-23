@@ -9,13 +9,15 @@ import 'add_device_page.dart';
 import 'settings_page.dart';
 import 'update_device_page.dart';
 
+// ignore: must_be_immutable
 class DevicesPage extends StatelessWidget {
   final DeviceController deviceController = Get.find();
   final TextEditingController searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
   final PermissionManager permissionManager = Get.find<PermissionManager>();
+  int? status;
 
-  DevicesPage({super.key});
+  DevicesPage({super.key, required this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +171,7 @@ class DevicesPage extends StatelessWidget {
                   ),
                   Obx(() {
                     return Text(
-                      'Page ${deviceController.currentPage.value} of ${deviceController.totalPages.value}',
+                      'Page ${deviceController.currentPage.value} of ${deviceController.lastPage.value}',
                       style: const TextStyle(fontSize: 16, color: primaryColr),
                     );
                   }),

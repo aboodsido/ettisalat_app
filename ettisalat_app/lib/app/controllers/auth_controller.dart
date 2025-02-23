@@ -69,11 +69,17 @@ class AuthController extends GetxController {
           await storage.write(
               key: 'user_id', value: data['data']['user']['id'].toString());
           await storage.write(
-              key: 'user_email', value: data['data']['user']['personal_email']);
+              key: 'user_email', value: data['data']['user']['company_email']);
           await storage.write(
-              key: 'user_name',
-              value:
-                  '${data['data']['user']['first_name']} ${data['data']['user']['last_name']}');
+              key: 'first_name',
+              value: '${data['data']['user']['first_name']}');
+          await storage.write(
+              key: 'middle_name',
+              value: '${data['data']['user']['middle_name']}');
+          await storage.write(
+              key: 'last_name', value: '${data['data']['user']['last_name']}');
+          await storage.write(
+              key: 'user_image', value: '${data['data']['user']['image']}');
 
           // Navigate to the home screen after successful login
           Get.offNamed('/home');
