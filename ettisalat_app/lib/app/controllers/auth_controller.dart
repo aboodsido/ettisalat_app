@@ -150,4 +150,41 @@ class AuthController extends GetxController {
       ),
     );
   }
+
+  void forgetPassword() async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/forget-password'),
+        body: {'email': email.value},
+      );
+      if (response.statusCode == 200) {
+        Get.snackbar(
+          'Success',
+          'A new password has been sent to your email.',
+          icon: const Icon(
+            Icons.check_circle,
+            color: Colors.green,
+          ),
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to send new password: ${response.statusCode}',
+          icon: const Icon(
+            Icons.error,
+            color: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An error occurred: $e',
+        icon: const Icon(
+          Icons.error,
+          color: Colors.red,
+        ),
+      );
+    }
+  }
 }

@@ -68,7 +68,20 @@ class LoginPage extends StatelessWidget {
                 ),
                 obscureText: true,
               ),
-              const SizedBox(height: 24.0),
+              const SizedBox(height: 10.0),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  onPressed: () => _showForgotPasswordDialog(),
+                  child: const Text(
+                    "Forgot Password?",
+                    style: TextStyle(color: primaryColr),
+                  ),
+                ),
+              ),
+
+              // Forgot password dialog
+              const SizedBox(height: 10),
               ElevatedButton(
                 style: const ButtonStyle(
                   shape: WidgetStatePropertyAll<OutlinedBorder>(
@@ -94,6 +107,62 @@ class LoginPage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showForgotPasswordDialog() {
+    Get.dialog(
+      AlertDialog(
+        title: const Text("Enter your email to reset the password"),
+        content: TextField(
+          onChanged: (value) => controller.email.value = value,
+          decoration: const InputDecoration(
+            hintText: "example@xyz.com",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+          ),
+          keyboardType: TextInputType.emailAddress,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            style: const ButtonStyle(
+              foregroundColor: WidgetStatePropertyAll(primaryColr),
+            ),
+            onPressed: () {
+              if (controller.email.value.isEmpty) {
+                Get.snackbar(
+                  'Error',
+                  'Please enter your email',
+                  icon: const Icon(
+                    Icons.warning,
+                    color: Colors.red,
+                  ),
+                );
+              } else if (!RegExp(
+                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                  .hasMatch(controller.email.value)) {
+                Get.snackbar(
+                  'Error',
+                  'Please enter a valid email address',
+                  icon: const Icon(
+                    Icons.warning,
+                    color: Colors.red,
+                  ),
+                );
+              } else {
+                controller.forgetPassword();
+                Get.back();
+              }
+            },
+            child: const Text("Submit"),
+          ),
+        ],
       ),
     );
   }
