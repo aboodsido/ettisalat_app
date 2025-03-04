@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import '../../constants.dart';
 import '../../controllers/device_controller.dart';
 import '../../services/permission_manager.dart';
-import '../settings_page.dart';
 import 'add_device_page.dart';
 import 'update_device_page.dart';
 
@@ -29,7 +28,7 @@ class DevicesPage extends StatelessWidget {
           IconButton(
             tooltip: 'Settings',
             onPressed: () {
-              Get.to(const SettingsPage());
+              Get.toNamed('/settings');
             },
             icon: const Icon(Icons.settings_outlined),
           ),
@@ -46,7 +45,6 @@ class DevicesPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // The section for search field and count cards, kept fixed at the top
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: buildSearchField(),
@@ -89,7 +87,6 @@ class DevicesPage extends StatelessWidget {
                   return deviceName.contains(searchQuery.value) ||
                       deviceIP.contains(searchQuery.value);
                 }).toList();
-
                 if (filteredDevices.isEmpty) {
                   return const Center(
                     child: Text(
@@ -114,6 +111,7 @@ class DevicesPage extends StatelessWidget {
                               vertical: 10, horizontal: 12),
                           itemCount: filteredDevices.length,
                           itemBuilder: (context, index) {
+                            print(filteredDevices.length);
                             final device = filteredDevices[index];
                             return Card(
                               elevation: 2,

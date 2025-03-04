@@ -1,10 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:ettisalat_app/app/constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+
 import '../models/profile_model.dart';
 import '../models/user_model.dart';
 
@@ -207,9 +208,8 @@ class UserController extends GetxController {
       final message = responseBody['message'] ?? "Unknown error";
 
       if (response.statusCode == 200) {
-        userProfile.value = ProfileModel.fromJson(
-            responseBody); // Store profile in observable variable
-        Get.snackbar("Success", message);
+        userProfile.value = ProfileModel.fromJson(responseBody);
+        // Get.snackbar("Success", message);
       } else {
         Get.snackbar("Error", message);
       }

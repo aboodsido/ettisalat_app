@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../views/devices/devices_page.dart';
 import '../views/home_page.dart';
 import '../views/login_page.dart';
-import '../views/profile_page.dart';
+import '../views/profile/profile_page.dart';
 import '../views/settings_page.dart';
 import '../views/splash_page.dart';
 import '../views/users/users_page.dart';

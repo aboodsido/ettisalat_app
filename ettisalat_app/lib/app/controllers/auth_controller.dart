@@ -11,6 +11,7 @@ import '../services/permission_manager.dart';
 class AuthController extends GetxController {
   var email = ''.obs;
   var password = ''.obs;
+  var loginIndicator = false.obs;
   final storage = const FlutterSecureStorage();
   final String loginUrl = '$baseUrl/auth/login';
   AuthController() {
@@ -39,6 +40,8 @@ class AuthController extends GetxController {
   // Login method
   void login() async {
     if (email.isNotEmpty && password.isNotEmpty) {
+      loginIndicator.value = true;
+
       Map<String, String> body = {
         'email': email.value,
         'password': password.value,
@@ -105,6 +108,8 @@ class AuthController extends GetxController {
             color: Colors.red,
           ),
         );
+      } finally {
+        loginIndicator.value = false;
       }
     } else {
       Get.snackbar(
@@ -185,6 +190,40 @@ class AuthController extends GetxController {
           color: Colors.red,
         ),
       );
+    }
+  }
+
+  Future<void> changePassword(String oldPassword, String newPassword) async {
+    String? authToken = await storage.read(key: 'auth_token');
+
+    final url = Uri.parse('$baseUrl/auth/change-password');
+    final headers = {
+      'Authorization': 'Bearer $authToken',
+      'Content-Type': 'application/json',
+    };
+    final body = jsonEncode({
+      'old_password': oldPassword,
+      'new_password': newPassword,
+    });
+
+    final response = await http.post(url, headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      if (jsonData['success']) {
+        Get.snackbar('Success', jsonData['message']);
+        Future.delayed(const Duration(seconds: 2)).then(
+          (value) async {
+            await storage.deleteAll();
+            Get.find<PermissionManager>().clearPermissions();
+            Get.offAllNamed('/login');
+          },
+        );
+      } else {
+        Get.snackbar('Error', jsonData['message']);
+      }
+    } else {
+      Get.snackbar('Error', 'Error changing password');
     }
   }
 }

@@ -202,7 +202,6 @@ class DeviceController extends GetxController {
 
   Future<void> deleteDevice(String deviceId) async {
     try {
-      // Get the token from secure storage
       String? authToken = await storage.read(key: 'auth_token');
 
       if (authToken != null) {

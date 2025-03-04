@@ -13,5 +13,6 @@ class InitialBinding extends Bindings {
     Get.put<DeviceController>(DeviceController());
     Get.put<UserController>(UserController());
     Get.put<PermissionManager>(PermissionManager());
+    Get.put<UserController>(UserController());
   }
 }
