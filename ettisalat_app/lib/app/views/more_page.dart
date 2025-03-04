@@ -5,7 +5,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
 import '../theme_controller.dart';
-import 'settings_page.dart';
 
 class MorePage extends StatefulWidget {
   const MorePage({super.key});
@@ -53,7 +52,7 @@ class _MorePageState extends State<MorePage> {
         actions: [
           IconButton(
             onPressed: () {
-              Get.to(const SettingsPage());
+              Get.toNamed('/settings');
             },
             icon: const Icon(Icons.settings_outlined),
           )
@@ -73,7 +72,9 @@ class _MorePageState extends State<MorePage> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Get.toNamed('/profile');
+                  },
                   child: Card(
                     elevation: 0,
                     shape: RoundedRectangleBorder(

@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
-import '../constants.dart';
+import '../../constants.dart';
 
 class UpdateUserPage extends StatefulWidget {
   final String title;
@@ -266,17 +266,34 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
   }
 
   Widget _buildImagePicker() {
+    // Determine the image provider:
+    // If a new image was picked, display that.
+    // Otherwise, check if the user data has an image (assumed to be a URL here).
+    ImageProvider? imageProvider;
+    if (selectedImage != null) {
+      imageProvider = FileImage(selectedImage!);
+    } else if (widget.userData['image'] != null &&
+        (widget.userData['image'] as String).isNotEmpty) {
+      imageProvider = NetworkImage(widget.userData['image']);
+    }
+
     return Center(
       child: GestureDetector(
         onTap: pickImage,
         child: CircleAvatar(
           radius: 50,
           backgroundColor: Colors.grey[300],
-          backgroundImage:
-              selectedImage != null ? FileImage(selectedImage!) : null,
-          child: selectedImage == null
-              ? const Icon(Icons.add_a_photo, color: Colors.white, size: 30)
-              : null,
+          backgroundImage: imageProvider,
+          child: Container(
+            margin: const EdgeInsets.only(left: 50, top: 65),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: primaryColr,
+            ),
+            width: 40,
+            height: 40,
+            child: const Icon(Icons.edit, color: Colors.white),
+          ),
         ),
       ),
     );

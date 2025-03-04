@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../controllers/device_controller.dart';
-import '../models/device_model.dart';
+import '../../controllers/device_controller.dart';
+import '../../models/device_model.dart';
 
 class UpdateDevicePage extends StatefulWidget {
   final Device device;

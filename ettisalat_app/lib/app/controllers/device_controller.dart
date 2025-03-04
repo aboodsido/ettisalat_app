@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ettisalat_app/app/constants.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -12,76 +13,124 @@ class DeviceController extends GetxController {
   var currentPage = 1.obs;
   var lastPage = 1.obs;
   var perPage = 10.obs;
-  var isLoading = true.obs;
+  var isLoading = false.obs;
+  var totalDevices = 0.obs;
+  var onlineDeviceCount = 0.obs;
+  var offlineShortDeviceCount = 0.obs;
+  var offlineLongDeviceCount = 0.obs;
 
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
-  Future<void> fetchDevicesAPI(int page) async {
-    final authToken = await _getAuthToken();
-    if (authToken == null) {
-      _handleNoTokenError();
-      return;
+  Future<void> fetchDevicesAPI({bool isRefreshing = false}) async {
+    if (isLoading.value) return; // Prevent multiple requests
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      isLoading.value = true;
+    });
+
+    try {
+      String? authToken = await storage.read(key: 'auth_token');
+      if (authToken == null) {
+        Get.snackbar("Error", "No token found, please login again");
+        return;
+      }
+
+      final url = Uri.parse('$baseUrl/devices/list?page=${currentPage.value}');
+      final headers = {
+        "Authorization": "Bearer $authToken",
+        'Accept-Encoding': 'gzip, deflate, br',
+        "Content-Type": "application/json",
+      };
+
+      final response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        final devicesData = jsonData['data']['data'];
+
+        if (isRefreshing) {
+          devices.clear(); // Clear only when refreshing
+        }
+
+        devices.addAll(devicesData
+            .map((device) => Device.fromJson(device))
+            .toList()
+            .cast<Device>());
+
+        totalDevices.value = jsonData['data']['total_records'];
+
+        fetchDeviceCountByStatus('online');
+        fetchDeviceCountByStatus('offline_short_term');
+        fetchDeviceCountByStatus('offline_long_term');
+
+        // Update pagination details
+        currentPage.value = jsonData['data']['current_page'];
+        lastPage.value =
+            (jsonData['data']['total_records'] / perPage.value).round();
+      } else {
+        Get.snackbar("Error", "Failed to fetch devices");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An error occurred: $e");
+      print(e);
+    } finally {
+      isLoading.value = false;
     }
-
-    final response = await _makeApiRequest(authToken, page);
-    if (response.statusCode != 200) {
-      _handleApiError(response);
-      return;
-    }
-    isLoading.value = false;
-    final jsonData = json.decode(response.body);
-    _updateDevices(jsonData);
-    _updatePagination(jsonData);
   }
 
-  Future<String?> _getAuthToken() async {
-    return await storage.read(key: 'auth_token');
-  }
-
-  Future<http.Response> _makeApiRequest(String authToken, int page) async {
-    final url = Uri.parse('$baseUrl/devices/list?page=$page');
-    final headers = {
-      "Authorization": "Bearer $authToken",
-      "Content-Type": "application/json",
-    };
-    return await http.get(url, headers: headers);
-  }
-
-  void _handleNoTokenError() {
-    Get.snackbar("Error", "No token found, please login again");
-  }
-
-  void _handleApiError(http.Response response) {
-    Get.snackbar("Error", "Failed to fetch devices");
-  }
-
-  void _updateDevices(dynamic jsonData) {
-    final devicesData = jsonData['data']['data'];
-    devices.value =
-        devicesData.map((device) => Device.fromJson(device)).toList().cast<Device>();
-  }
-
-  void _updatePagination(dynamic jsonData) {
-    currentPage.value = jsonData['data']['current_page'];
-    lastPage.value =
-        (jsonData['data']['total_records'] / jsonData['data']['per_page'])
-            .ceil();
-    perPage.value = jsonData['data']['per_page'];
-  }
-
-  // Method to load the next page
   void nextPage() {
     if (currentPage.value < lastPage.value) {
       currentPage.value++;
-      fetchDevicesAPI(currentPage.value);
+      fetchDevicesAPI(isRefreshing: true);
     }
   }
 
-  // Method to load the previous page
   void previousPage() {
     if (currentPage.value > 1) {
       currentPage.value--;
-      fetchDevicesAPI(currentPage.value);
+      fetchDevicesAPI(isRefreshing: true);
+    }
+  }
+
+  void refreshDevices() {
+    currentPage.value = 1;
+    fetchDevicesAPI(isRefreshing: true);
+  }
+
+  Future<void> fetchDeviceCountByStatus(String status) async {
+    try {
+      String? authToken = await storage.read(key: 'auth_token');
+
+      if (authToken == null) {
+        Get.snackbar("Error", "No token found, please login again");
+        return;
+      }
+
+      final url = Uri.parse('$baseUrl/devices/list?status=$status');
+      final headers = {
+        "Authorization": "Bearer $authToken",
+        'Accept-Encoding': 'gzip, deflate, br',
+        "Content-Type": "application/json",
+      };
+
+      final response = await http.get(url, headers: headers);
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        int totalRecords = jsonData['data']['total_records'];
+
+        if (status == 'online') {
+          onlineDeviceCount.value = totalRecords;
+        } else if (status == 'offline_short_term') {
+          offlineShortDeviceCount.value = totalRecords;
+        } else if (status == 'offline_long_term') {
+          offlineLongDeviceCount.value = totalRecords;
+        }
+      } else {
+        Get.snackbar(
+            "Error", "Failed to fetch device count for status: $status");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "An error occurred: $e");
     }
   }
 
@@ -104,7 +153,7 @@ class DeviceController extends GetxController {
         if (response.statusCode == 200) {
           if (responseBody['success']) {
             Get.snackbar("Success", message);
-            fetchDevicesAPI(currentPage.value);
+            fetchDevicesAPI();
           } else {
             Get.snackbar("Failed", message);
           }
@@ -139,7 +188,7 @@ class DeviceController extends GetxController {
         if (response.statusCode == 200) {
           Get.snackbar("Success", "Device updated successfully");
           // Refresh the devices list after the update
-          fetchDevicesAPI(currentPage.value);
+          fetchDevicesAPI();
         } else {
           Get.snackbar("Error", "Failed to update device");
         }
@@ -168,7 +217,7 @@ class DeviceController extends GetxController {
         if (response.statusCode == 200) {
           Get.snackbar("Success", "Device deleted successfully");
           // Refresh the devices list after deletion
-          fetchDevicesAPI(currentPage.value);
+          fetchDevicesAPI();
         } else {
           Get.snackbar("Error", "Failed to delete device");
         }

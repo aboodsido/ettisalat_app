@@ -11,7 +11,7 @@ class DashboardPage extends StatelessWidget {
   DashboardPage({super.key});
   @override
   Widget build(BuildContext context) {
-    deviceController.fetchDevicesAPI(deviceController.currentPage.value);
+    deviceController.fetchDevicesAPI();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
@@ -19,7 +19,7 @@ class DashboardPage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              Get.to(const SettingsPage());
+              Get.toNamed('/settings');
             },
             icon: const Icon(Icons.settings_outlined),
           )
@@ -42,31 +42,28 @@ class DashboardPage extends StatelessWidget {
               ),
               buildCard(
                 title: "DEVICES",
-                number: "${deviceController.devices.length}",
+                number: "${deviceController.totalDevices}",
                 icon: Icons.wifi,
                 color: const Color(0xFFD8ECF7),
                 circleColor: const Color(0xFF00A1D3),
               ),
               buildCard(
                 title: "OPERATIONAL",
-                number:
-                    "${deviceController.devices.where((device) => device.status == '1').length}",
+                number: "${deviceController.onlineDeviceCount}",
                 icon: Icons.wifi,
                 color: const Color(0xFFE0F8E0),
                 circleColor: const Color(0xFF3CD653),
               ),
               buildCard(
                 title: "OFFLINE SHORT TERM",
-                number:
-                    "${deviceController.devices.where((device) => device.status == '2').length}",
+                number: "${deviceController.offlineShortDeviceCount}",
                 icon: Icons.wifi,
                 color: const Color(0xFFFFEBE4),
                 circleColor: const Color(0xFFFC9375),
               ),
               buildCard(
                 title: "OFFLINE LONG TERM",
-                number:
-                    "${deviceController.devices.where((device) => device.status == '3').length}",
+                number: "${deviceController.offlineLongDeviceCount}",
                 icon: Icons.wifi,
                 color: const Color(0xFFFFE0E5),
                 circleColor: const Color(0xFFF95979),

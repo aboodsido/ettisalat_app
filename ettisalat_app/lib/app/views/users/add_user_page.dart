@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
-import '../constants.dart';
+import '../../constants.dart';
 
 class AddUserPage extends StatefulWidget {
   final String title;

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../controllers/user_controller.dart';
-import '../services/permission_manager.dart';
+import '../../controllers/user_controller.dart';
+import '../../services/permission_manager.dart';
 import 'add_user_page.dart';
-import 'settings_page.dart';
+import '../settings_page.dart';
 import 'update_user_page.dart';
 
 class UsersPage extends StatelessWidget {
@@ -129,6 +129,7 @@ class UsersPage extends StatelessWidget {
                                         "email_frequency":
                                             user.emailFrequencyHours,
                                         "address": user.address,
+                                        "image": user.image,
                                       };
 
                                       // Pass the current user data to the UpdateUserPage
@@ -196,7 +197,6 @@ class UsersPage extends StatelessWidget {
                     buttonText: "Add User",
                     onSave: (userData) async {
                       await userController.addUser(userData);
-                      Get.snackbar("Success", "User added successfully!");
                     },
                   ),
                 );

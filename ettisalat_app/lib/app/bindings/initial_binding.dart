@@ -4,7 +4,6 @@ import '../controllers/auth_controller.dart';
 import '../controllers/device_controller.dart';
 import '../controllers/user_controller.dart';
 import '../services/permission_manager.dart';
-// import '../controllers/home_controller.dart';
 
 class InitialBinding extends Bindings {
   @override

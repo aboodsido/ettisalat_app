@@ -5,10 +5,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../models/profile_model.dart';
 import '../models/user_model.dart';
 
 class UserController extends GetxController {
   var users = <UserModel>[].obs; // Reactive list for user data
+  var userProfile = Rxn<ProfileModel>();
   var isLoading = false.obs; // Track loading state
   final storage = const FlutterSecureStorage();
 
@@ -72,7 +74,7 @@ class UserController extends GetxController {
       request.fields['role_id'] = userData["role_id"].toString();
       request.fields['receives_emails'] =
           userData["receives_emails"].toString();
-      request.fields['email_frequency'] = userData["email_frequency"];
+      request.fields['email_frequency_hours'] = userData["email_frequency"];
       request.fields['address'] = userData["address"];
 
       if (userData["image"]?.isNotEmpty ?? false) {
@@ -84,7 +86,11 @@ class UserController extends GetxController {
       var response = await request.send();
 
       if (response.statusCode == 200) {
-        Get.snackbar("Success", "User added successfully!");
+        final responseBody = await response.stream.bytesToString();
+        final responseJson = json.decode(responseBody);
+        final message = responseJson['message'].toString();
+        final success = responseJson['success'];
+        Get.snackbar(success == false ? "Failed" : "Success", message);
         fetchUsers();
       } else {
         Get.snackbar("Error", "Failed to add user: ${response.statusCode}");
@@ -120,7 +126,7 @@ class UserController extends GetxController {
       request.fields['role_id'] = userData["role_id"].toString();
       request.fields['receives_emails'] =
           userData["receives_emails"].toString();
-      request.fields['email_frequency'] = userData["email_frequency"];
+      request.fields['email_frequency_hours'] = userData["email_frequency"];
       request.fields['address'] = userData["address"];
 
       if (userData["image"]?.isNotEmpty ?? false) {
@@ -175,6 +181,43 @@ class UserController extends GetxController {
     } catch (e) {
       print(e.toString());
       Get.snackbar("Error", "An error occurred: $e");
+    }
+  }
+
+  // Fetch the user profile data
+  Future<void> fetchProfile(int userId) async {
+    try {
+      String? authToken = await storage.read(key: 'auth_token');
+
+      if (authToken == null) {
+        Get.snackbar("Error", "No token found, please login again.");
+        return;
+      }
+
+      isLoading(true);
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/users/profile/$userId'),
+        headers: {
+          "Authorization": "Bearer $authToken",
+        },
+      );
+
+      final responseBody = json.decode(response.body);
+      final message = responseBody['message'] ?? "Unknown error";
+
+      if (response.statusCode == 200) {
+        userProfile.value = ProfileModel.fromJson(
+            responseBody); // Store profile in observable variable
+        Get.snackbar("Success", message);
+      } else {
+        Get.snackbar("Error", message);
+      }
+    } catch (e) {
+      print(e.toString());
+      Get.snackbar("Error", "An error occurred: $e");
+    } finally {
+      isLoading(false);
     }
   }
 }

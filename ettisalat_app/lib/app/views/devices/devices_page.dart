@@ -1,27 +1,25 @@
-import 'package:ettisalat_app/app/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../controllers/device_controller.dart';
-import '../services/permission_manager.dart';
+import '../../constants.dart';
+import '../../controllers/device_controller.dart';
+import '../../services/permission_manager.dart';
+import '../settings_page.dart';
 import 'add_device_page.dart';
-import 'settings_page.dart';
 import 'update_device_page.dart';
 
-// ignore: must_be_immutable
 class DevicesPage extends StatelessWidget {
   final DeviceController deviceController = Get.find();
   final TextEditingController searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
   final PermissionManager permissionManager = Get.find<PermissionManager>();
-  int? status;
 
-  DevicesPage({super.key, required this.status});
+  DevicesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    deviceController.fetchDevicesAPI(deviceController.currentPage.value);
+    deviceController.fetchDevicesAPI();
 
     return Scaffold(
       appBar: AppBar(
@@ -48,6 +46,7 @@ class DevicesPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // The section for search field and count cards, kept fixed at the top
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: buildSearchField(),
@@ -58,13 +57,12 @@ class DevicesPage extends StatelessWidget {
                 () => Row(
                   children: [
                     buildCountCard(
-                        '${deviceController.devices.where((device) => device.status == '1').length}',
-                        Colors.green),
+                        '${deviceController.onlineDeviceCount} ', Colors.green),
                     buildCountCard(
-                        '${deviceController.devices.where((device) => device.status == '2').length}',
+                        '${deviceController.offlineShortDeviceCount} ',
                         Colors.orangeAccent),
                     buildCountCard(
-                        '${deviceController.devices.where((device) => device.status == '3').length}',
+                        '${deviceController.offlineLongDeviceCount} ',
                         Colors.red),
                   ],
                 ),
@@ -81,6 +79,7 @@ class DevicesPage extends StatelessWidget {
                 ),
               ),
             ),
+            // The list of devices and pagination inside an expanded widget
             Expanded(
               child: Obx(() {
                 final filteredDevices =
@@ -106,55 +105,64 @@ class DevicesPage extends StatelessWidget {
                           color: primaryColr,
                         ),
                       )
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 12),
-                        itemCount: filteredDevices.length,
-                        itemBuilder: (context, index) {
-                          final device = filteredDevices[index];
-                          return Card(
-                            elevation: 2,
-                            margin: const EdgeInsets.only(bottom: 10),
-                            color: const Color.fromARGB(241, 243, 243, 249),
-                            child: ListTile(
-                              leading: buildDeviceIdBadge(
-                                device.id,
-                                device.status == '1'
-                                    ? Colors.green
-                                    : device.status == '2'
-                                        ? Colors.orangeAccent
-                                        : Colors.red,
-                              ),
-                              title: Row(
-                                children: [
-                                  Text(
-                                    device.name,
-                                    style: const TextStyle(
-                                        color: primaryColr,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Flexible(
-                                    child: Text(
-                                      'IP: ${device.ipAddress}',
-                                      style: const TextStyle(
-                                          color: Colors.black54),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              subtitle: Text(
-                                "${device.lineCode}      Type: ${device.deviceType}",
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                              trailing: buildTrailingActions(device.id),
-                            ),
-                          );
+                    : RefreshIndicator(
+                        onRefresh: () async {
+                          deviceController.refreshDevices();
                         },
+                        child: ListView.builder(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 12),
+                          itemCount: filteredDevices.length,
+                          itemBuilder: (context, index) {
+                            final device = filteredDevices[index];
+                            return Card(
+                              elevation: 2,
+                              margin: const EdgeInsets.only(bottom: 10),
+                              color: const Color.fromARGB(241, 243, 243, 249),
+                              child: ListTile(
+                                leading: buildDeviceIdBadge(
+                                  device.id,
+                                  device.status == 'online'
+                                      ? Colors.green
+                                      : device.status == 'offline_short_term'
+                                          ? Colors.orangeAccent
+                                          : Colors.red,
+                                ),
+                                title: Row(
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        device.name,
+                                        style: const TextStyle(
+                                            color: primaryColr,
+                                            fontWeight: FontWeight.w600),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Flexible(
+                                      child: Text(
+                                        'IP: ${device.ipAddress}',
+                                        style: const TextStyle(
+                                            color: Colors.black54),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                subtitle: Text(
+                                  "${device.lineCode}      Type: ${device.deviceType}",
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                                trailing: buildTrailingActions(device.id),
+                              ),
+                            );
+                          },
+                        ),
                       );
               }),
             ),
+            // Pagination controls
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Row(

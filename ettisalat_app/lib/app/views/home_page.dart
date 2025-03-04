@@ -1,12 +1,12 @@
-import 'package:ettisalat_app/app/constants.dart';
-import 'package:ettisalat_app/app/views/map_page.dart';
-import 'package:ettisalat_app/app/views/more_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../constants.dart';
 import 'dashboard_page.dart';
-import 'devices_page.dart';
-import 'users_page.dart';
+import 'devices/devices_page.dart';
+import 'map_page.dart';
+import 'more_page.dart';
+import 'users/users_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -125,14 +125,14 @@ class _HomePageState extends State<HomePage>
           ),
         ),
         body: TabBarView(
-          controller: _tabController, 
+          controller: _tabController,
           physics: const NeverScrollableScrollPhysics(),
           children: [
             DashboardPage(),
             const UsersPage(),
             const MapPage(),
-            DevicesPage(status: null,),
-            MorePage(),
+            DevicesPage(),
+            const MorePage(),
           ],
         ),
       ),
