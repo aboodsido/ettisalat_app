@@ -1,9 +1,7 @@
 // ignore_for_file: deprecated_member_use
-
 import 'dart:convert';
 import 'dart:ui' as ui;
 
-import 'package:ettisalat_app/app/models/map_devices_model.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
@@ -11,11 +9,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
 import '../constants.dart';
+import '../models/map_devices_model.dart';
+import 'map_settings_controller.dart';
 
 class MapApiController extends GetxController {
   var devices = <MapDevice>[].obs;
   var markers = <Marker>{}.obs;
   var isLoading = false.obs;
+  final MapSettingsController mapSettingsController =
+      Get.put(MapSettingsController());
 
   Map<String, BitmapDescriptor> markerIcons = {};
 
@@ -54,6 +56,11 @@ class MapApiController extends GetxController {
   void onInit() {
     super.onInit();
     fetchDevices();
+
+    // Listen to changes in deviceStatus and update markers accordingly.
+    ever(mapSettingsController.deviceStatus, (_) {
+      _createMarkers();
+    });
   }
 
   /// Fetch devices from API
@@ -97,10 +104,16 @@ class MapApiController extends GetxController {
     }
   }
 
-  /// Create markers from devices list
+  /// Create markers from devices list,
+  /// filtering based on the deviceStatus value from settings.
   void _createMarkers() {
     markers.clear();
+    String selectedStatus = mapSettingsController.deviceStatus.value;
     for (var device in devices) {
+      // If the selected status is not "all", only add devices with matching status.
+      if (selectedStatus != 'all' && device.status != selectedStatus) {
+        continue;
+      }
       double? lat = double.tryParse(device.latitude.toString());
       double? lng = double.tryParse(device.longitude.toString());
 
@@ -115,11 +128,12 @@ class MapApiController extends GetxController {
               title: device.name,
               snippet: '${device.deviceType} • ${device.status}',
             ),
-            // Customize the marker icon here if needed
             icon: icon,
           ),
         );
       }
     }
+    // Refresh the markers observable so that any Obx widgets update.
+    markers.refresh();
   }
 }
