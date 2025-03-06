@@ -1,13 +1,13 @@
-import 'package:ettisalat_app/app/controllers/map_api_controller.dart';
-import 'package:ettisalat_app/app/controllers/marker_settings_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../controllers/map_api_controller.dart';
 import '../controllers/map_settings_controller.dart';
 
 class MapPage extends StatefulWidget {
-  const MapPage({super.key});
+  const MapPage({Key? key}) : super(key: key);
 
   @override
   _MapPageState createState() => _MapPageState();
@@ -15,38 +15,46 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   GoogleMapController? _controller;
-  // final MapSettingsController mapSettingsController =
-  //     Get.put(MapSettingsController());
-
-  // final MarkerSettingsController markerSettingsController =
-  //     Get.put(MarkerSettingsController());
 
   final MapApiController mapApiController = Get.find<MapApiController>();
-  // String? _zoomLevel;
-  // bool _disableDoubleClickZoom = false;
-  // bool _showPlaces = true;
-  // bool _showHosts = true;
-  // bool _showFibers = false;
-  BitmapDescriptor customIcon = BitmapDescriptor.defaultMarker;
+  final MapSettingsController mapSettingsController =
+      Get.put(MapSettingsController());
 
   @override
   void initState() {
     super.initState();
-    mapApiController.loadCustomIcons().then(
-      (value) {
-        mapApiController.fetchDevices();
-      },
-    );
-    // Initialize settings from the controller
-    // _zoomLevel = mapSettingsController.zoomLevel.value;
-    // _disableDoubleClickZoom =
-    //     mapSettingsController.disableDoubleClickZoom.value;
-    // _showPlaces = mapSettingsController.showPlaces.value;
-    // mapSettingsController.loadSettings();
-    // _showHosts = mapSettingsController.showHosts.value;
-    // _showFibers = mapSettingsController.showFibers.value;
-    // _addHostMarkers();
-    // print(_zoomLevel);
+    ever<String>(mapSettingsController.zoomLevel, (newZoom) {
+      final zoomValue = double.tryParse(newZoom) ?? 10.0;
+      if (_controller != null) {
+        _controller?.animateCamera(CameraUpdate.zoomTo(zoomValue));
+      }
+    });
+    mapApiController.loadCustomIcons().then((_) {
+      mapApiController.fetchDevices();
+    });
+  }
+
+  // تحويل قيمة mapLayer إلى نوع MapType
+  MapType _getMapType(String mapLayer) {
+    switch (mapLayer) {
+      case 'satellite':
+        return MapType.satellite;
+      case 'terrain':
+        return MapType.terrain;
+      default:
+        return MapType.normal; // road
+    }
+  }
+
+  void _togglePlaces(bool show) async {
+    if (_controller == null) return;
+    if (!show) {
+      String style =
+          await rootBundle.loadString('assets/map_style_no_poi.json');
+      _controller?.setMapStyle(style);
+    } else {
+      _controller?.setMapStyle(null);
+    }
   }
 
   @override
@@ -57,46 +65,39 @@ class _MapPageState extends State<MapPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {
-              Get.toNamed('/settings');
-            },
+            onPressed: () => Get.toNamed('/settings'),
             icon: const Icon(Icons.settings_outlined),
-          )
+          ),
         ],
       ),
-      body: Obx(
-        () {
-          // if (!mapSettingsController.isLoaded.value) {
-          //   // Show loading indicator while settings are being loaded
-          //   return const Center(child: CircularProgressIndicator());
-          // }
-          return ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(40),
-              topRight: Radius.circular(40),
+      body: Obx(() {
+        if (!mapSettingsController.isLoaded.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        _togglePlaces(mapSettingsController.showPlaces.value);
+
+        return ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          child: GoogleMap(
+            onMapCreated: (controller) {
+              _controller = controller;
+            },
+            mapType: _getMapType(mapSettingsController.mapLayer.value),
+            initialCameraPosition: CameraPosition(
+              target: const LatLng(31.5225, 34.4531),
+              zoom: double.parse(mapSettingsController.zoomLevel.value),
             ),
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target:
-                    const LatLng(31.5225, 34.4531), // Default camera position
-                zoom: 10, // Set zoom level
-              ),
-              markers: mapApiController.markers.value,
-              zoomGesturesEnabled: false,
-              // onMapCreated: (GoogleMapController controller) {
-              //   _controller = controller;
-              //   _controller?.setMapStyle(
-              //     _showPlaces // If true, show places; if false, hide places
-              //         ? '[{"elementType": "geometry", "stylers": [{"visibility": "on"}]}, {"featureType": "poi", "elementType": "all", "stylers": [{"visibility": "on"}]}, {"featureType": "landscape", "elementType": "all", "stylers": [{"visibility": "on"}]}]'
-              //         : '[{"elementType": "geometry", "stylers": [{"visibility": "on"}]}, {"featureType": "poi", "elementType": "all", "stylers": [{"visibility": "off"}]}, {"featureType": "landscape", "elementType": "all", "stylers": [{"visibility": "off"}]}]',
-              //   );
-              // },
-              zoomControlsEnabled: true,
-              buildingsEnabled: true,
-            ),
-          );
-        },
-      ),
+            markers: mapApiController.markers.value,
+            zoomGesturesEnabled:
+                !mapSettingsController.disableDoubleClickZoom.value,
+            zoomControlsEnabled: mapSettingsController.showZoomControls.value,
+            compassEnabled: mapSettingsController.showCompass.value,
+          ),
+        );
+      }),
     );
   }
 }

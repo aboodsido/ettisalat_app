@@ -2,68 +2,65 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MapSettingsController extends GetxController {
-  // Define settings with default values
   RxString zoomLevel = '10'.obs;
-  RxString hostStatus = 'all'.obs;
+  RxString deviceStatus = 'all'.obs;
+  RxString mapLayer = 'road'.obs; // road, satellite, terrain
   RxBool disableDoubleClickZoom = false.obs;
   RxBool showPlaces = true.obs;
-  RxBool showHosts = true.obs;
-  RxBool showFibers = false.obs;
+  RxBool showCompass = false.obs;
+  RxBool showZoomControls = false.obs;
 
-  var isLoaded = false.obs; // Track loading state
+  var isLoaded = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    loadSettings(); // Load settings when the app starts
+    loadSettings();
+
+    ever(zoomLevel, (_) => saveSettings());
+    ever(deviceStatus, (_) => saveSettings());
+    ever(mapLayer, (_) => saveSettings());
+    ever(disableDoubleClickZoom, (_) => saveSettings());
+    ever(showPlaces, (_) => saveSettings());
+    ever(showCompass, (_) => saveSettings());
+    ever(showZoomControls, (_) => saveSettings());
   }
 
-  // Save settings to SharedPreferences
   Future<void> saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('zoomLevel', zoomLevel.value);
-    await prefs.setString('hostStatus', hostStatus.value);
+    await prefs.setString('hostStatus', deviceStatus.value);
+    await prefs.setString('mapLayer', mapLayer.value);
     await prefs.setBool('disableDoubleClickZoom', disableDoubleClickZoom.value);
     await prefs.setBool('showPlaces', showPlaces.value);
-    await prefs.setBool('showHosts', showHosts.value);
-    await prefs.setBool('showFibers', showFibers.value);
+    await prefs.setBool('showCompass', showCompass.value);
+    await prefs.setBool('showZoomControls', showZoomControls.value);
   }
 
-  // Load settings from SharedPreferences
   Future<void> loadSettings() async {
-    if (isLoaded.value) {
-      // If settings are already in memory, skip reloading
-      return;
-    }
     final prefs = await SharedPreferences.getInstance();
     zoomLevel.value = prefs.getString('zoomLevel') ?? '10';
-    hostStatus.value = prefs.getString('hostStatus') ?? 'all';
+    deviceStatus.value = prefs.getString('hostStatus') ?? 'all';
+    mapLayer.value = prefs.getString('mapLayer') ?? 'road';
     disableDoubleClickZoom.value =
         prefs.getBool('disableDoubleClickZoom') ?? false;
     showPlaces.value = prefs.getBool('showPlaces') ?? true;
-    showHosts.value = prefs.getBool('showHosts') ?? true;
-    showFibers.value = prefs.getBool('showFibers') ?? false;
+    showCompass.value = prefs.getBool('showCompass') ?? false;
+    showZoomControls.value = prefs.getBool('showZoomControls') ?? false;
 
-    isLoaded.value = true; // Mark as loaded
+    isLoaded.value = true;
   }
 
-  // Reset settings to default values
-  void resetSettings() {
+  Future<void> resetSettings() async {
     zoomLevel.value = '10';
-    hostStatus.value = 'all';
+    deviceStatus.value = 'all';
+    mapLayer.value = 'road';
     disableDoubleClickZoom.value = false;
     showPlaces.value = true;
-    showHosts.value = true;
-    showFibers.value = false;
+    showCompass.value = false;
+    showZoomControls.value = false;
 
-    // Optionally, you can clear the saved preferences as well
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.remove('zoomLevel');
-      prefs.remove('hostStatus');
-      prefs.remove('disableDoubleClickZoom');
-      prefs.remove('showPlaces');
-      prefs.remove('showHosts');
-      prefs.remove('showFibers');
-    });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clears all stored settings
   }
 }

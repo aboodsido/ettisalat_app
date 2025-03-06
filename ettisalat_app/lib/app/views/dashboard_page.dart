@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../services/dashboard_card.dart';
-import 'settings_page.dart';
 
 class DashboardPage extends StatelessWidget {
   DeviceController deviceController = Get.find();

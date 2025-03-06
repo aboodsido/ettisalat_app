@@ -14,7 +14,7 @@ class AppRoutes {
   static const LOGIN = '/login';
   static const HOME = '/home';
   static const MORE = '/more';
-  static const HOSTS = '/hosts';
+  static const DEVICES = '/devices';
   static const USERS = '/users';
   static const SETTINGS = '/settings';
   static const DASHBOARD = '/dashboard';
@@ -25,7 +25,7 @@ class AppRoutes {
     GetPage(name: LOGIN, page: () => LoginPage()),
     GetPage(name: HOME, page: () => const HomePage()),
     GetPage(
-      name: HOSTS,
+      name: DEVICES,
       page: () => DevicesPage(),
     ),
     GetPage(name: USERS, page: () => const UsersPage()),

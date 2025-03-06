@@ -1,15 +1,14 @@
 // Dropdown widget
 import 'package:flutter/material.dart';
 
-SizedBox buildDropdownListWidget({
+Expanded buildDropdownListWidget({
   required dynamic value,
   required List<DropdownMenuItem<String>> items,
   required Function(dynamic) onChanged,
 }) {
-  return SizedBox(
-    width: 155,
-    height: 70,
+  return Expanded(
     child: DropdownButtonFormField<String>(
+      isExpanded: true,
       value: "$value",
       onChanged: onChanged,
       items: items,
