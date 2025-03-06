@@ -95,7 +95,6 @@ class DevicesPage extends StatelessWidget {
                     ),
                   );
                 }
-
                 return deviceController.isLoading.value
                     ? const Center(
                         child: CircularProgressIndicator(
