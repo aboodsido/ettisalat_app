@@ -31,7 +31,7 @@ class DeviceController extends GetxController {
     try {
       String? authToken = await storage.read(key: 'auth_token');
       if (authToken == null) {
-        Get.snackbar("Error", "No token found, please login again");
+        // Get.snackbar("Error", "No token found, please login again");
         return;
       }
 
@@ -101,7 +101,7 @@ class DeviceController extends GetxController {
       String? authToken = await storage.read(key: 'auth_token');
 
       if (authToken == null) {
-        Get.snackbar("Error", "No token found, please login again");
+        // Get.snackbar("Error", "No token found, please login again");
         return;
       }
 
@@ -161,7 +161,7 @@ class DeviceController extends GetxController {
           Get.snackbar("Error", "Failed to add device.");
         }
       } else {
-        Get.snackbar("Error", "No token found, please login again.");
+        // Get.snackbar("Error", "No token found, please login again.");
       }
     } catch (e) {
       Get.snackbar("Error", "An error occurred: $e");
@@ -193,7 +193,7 @@ class DeviceController extends GetxController {
           Get.snackbar("Error", "Failed to update device");
         }
       } else {
-        Get.snackbar("Error", "No token found, please login again");
+        // Get.snackbar("Error", "No token found, please login again");
       }
     } catch (e) {
       Get.snackbar("Error", e.toString());
@@ -221,7 +221,7 @@ class DeviceController extends GetxController {
           Get.snackbar("Error", "Failed to delete device");
         }
       } else {
-        Get.snackbar("Error", "No token found, please login again");
+        // Get.snackbar("Error", "No token found, please login again");
       }
     } catch (e) {
       Get.snackbar("Error", e.toString());

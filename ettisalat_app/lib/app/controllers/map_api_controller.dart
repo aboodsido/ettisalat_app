@@ -63,13 +63,12 @@ class MapApiController extends GetxController {
     });
   }
 
-  /// Fetch devices from API
   Future<void> fetchDevices() async {
     try {
       String? authToken =
           await const FlutterSecureStorage().read(key: 'auth_token');
       if (authToken == null) {
-        Get.snackbar("Error", "No token found, please login again");
+        // Get.snackbar("Error", "No token found, please login again");
         return;
       }
       isLoading.value = true;
@@ -104,8 +103,6 @@ class MapApiController extends GetxController {
     }
   }
 
-  /// Create markers from devices list,
-  /// filtering based on the deviceStatus value from settings.
   void _createMarkers() {
     markers.clear();
     String selectedStatus = mapSettingsController.deviceStatus.value;

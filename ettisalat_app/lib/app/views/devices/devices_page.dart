@@ -18,7 +18,8 @@ class DevicesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    deviceController.fetchDevicesAPI();
+    deviceController.refreshDevices();
+    // deviceController.fetchDevicesAPI();
 
     return Scaffold(
       appBar: AppBar(

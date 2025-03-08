@@ -22,7 +22,7 @@ class UserController extends GetxController {
           key: 'auth_token'); // Replace with your storage method
 
       if (authToken == null) {
-        Get.snackbar("Error", "No token found, please login again.");
+        // Get.snackbar("Error", "No token found, please login again.");
         return;
       }
 
@@ -55,7 +55,7 @@ class UserController extends GetxController {
       String? authToken = await storage.read(key: 'auth_token');
 
       if (authToken == null) {
-        Get.snackbar("Error", "No token found, please login again.");
+        // Get.snackbar("Error", "No token found, please login again.");
         return;
       }
 
@@ -107,7 +107,7 @@ class UserController extends GetxController {
       String? authToken = await storage.read(key: 'auth_token');
 
       if (authToken == null) {
-        Get.snackbar("Error", "No token found, please login again.");
+        // Get.snackbar("Error", "No token found, please login again.");
         return;
       }
 
@@ -158,7 +158,7 @@ class UserController extends GetxController {
       String? authToken = await storage.read(key: 'auth_token');
 
       if (authToken == null) {
-        Get.snackbar("Error", "No token found, please login again.");
+        // Get.snackbar("Error", "No token found, please login again.");
         return;
       }
 
@@ -191,7 +191,7 @@ class UserController extends GetxController {
       String? authToken = await storage.read(key: 'auth_token');
 
       if (authToken == null) {
-        Get.snackbar("Error", "No token found, please login again.");
+        // Get.snackbar("Error", "No token found, please login again.");
         return;
       }
 
