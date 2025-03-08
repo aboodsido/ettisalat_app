@@ -14,9 +14,6 @@ class AuthController extends GetxController {
   var loginIndicator = false.obs;
   final storage = const FlutterSecureStorage();
   final String loginUrl = '$baseUrl/auth/login';
-  AuthController() {
-    print("AuthController initialized");
-  }
 
   @override
   void onInit() {

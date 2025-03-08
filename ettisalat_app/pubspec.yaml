@@ -44,6 +44,16 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   jwt_decoder: ^2.0.1
   image_picker: ^1.1.2
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/images/splashLogo.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  adaptive_icon_background: "#ffffff" # You can use a color or image for the background
+  adaptive_icon_foreground: "assets/images/splashLogo.png" # For adaptive icons on Android
 
 dev_dependencies:
   flutter_test:
