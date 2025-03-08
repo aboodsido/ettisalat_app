@@ -30,8 +30,13 @@ class _ChangePasswordTabState extends State<ChangePasswordTab> {
                 TextFormField(
                   obscureText: true,
                   decoration: const InputDecoration(
-                    labelText: 'Old Password',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderSide: BorderSide.none,
+                    ),
+                    hintText: 'Old Password',
+                    filled: true,
+                    fillColor: Color.fromRGBO(232, 240, 254, 1),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -45,8 +50,13 @@ class _ChangePasswordTabState extends State<ChangePasswordTab> {
                 TextFormField(
                   obscureText: true,
                   decoration: const InputDecoration(
-                    labelText: 'New Password',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderSide: BorderSide.none,
+                    ),
+                    hintText: 'New Password',
+                    filled: true,
+                    fillColor: Color.fromRGBO(232, 240, 254, 1),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -61,8 +71,13 @@ class _ChangePasswordTabState extends State<ChangePasswordTab> {
                 TextFormField(
                   obscureText: true,
                   decoration: const InputDecoration(
-                    labelText: 'Confirm New Password',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderSide: BorderSide.none,
+                    ),
+                    hintText: 'Confirm New Password',
+                    filled: true,
+                    fillColor: Color.fromRGBO(232, 240, 254, 1),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -77,8 +92,9 @@ class _ChangePasswordTabState extends State<ChangePasswordTab> {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  style: const ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(primaryColr),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    backgroundColor: primaryColr,
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {

@@ -43,6 +43,7 @@ Widget buildSettingContainer(
             ],
           ),
         ),
+        const SizedBox(width: 10),
         child,
       ],
     ),

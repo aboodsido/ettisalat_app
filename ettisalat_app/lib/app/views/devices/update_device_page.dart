@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../constants.dart';
 import '../../controllers/device_controller.dart';
 import '../../models/device_model.dart';
 
@@ -155,6 +156,10 @@ class _UpdateDevicePageState extends State<UpdateDevicePage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: primaryColr,
+                ),
                 onPressed: () {
                   // Collect updated data in the correct structure
                   Map<String, dynamic> updatedDeviceData = {
@@ -174,7 +179,13 @@ class _UpdateDevicePageState extends State<UpdateDevicePage> {
                   // Go back to the previous page after saving
                   Get.back();
                 },
-                child: const Text("Save Changes"),
+                child: const Text(
+                  "Save Changes",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),

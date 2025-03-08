@@ -144,6 +144,7 @@ class _AddUserPageState extends State<AddUserPage> {
               _buildInput("Address", 'address', TextInputType.streetAddress),
               const SizedBox(height: 20),
               _buildSubmitButton(),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -247,6 +248,11 @@ class _AddUserPageState extends State<AddUserPage> {
   Widget _buildSubmitButton() {
     return Center(
       child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(double.infinity, 50),
+          backgroundColor: primaryColr,
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+        ),
         onPressed: () {
           if (_validateFields()) {
             final userData = {
@@ -270,12 +276,6 @@ class _AddUserPageState extends State<AddUserPage> {
                 "Validation Error", "Please fill all fields correctly.");
           }
         },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColr,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-        ),
         child: Text(
           widget.buttonText,
           style:

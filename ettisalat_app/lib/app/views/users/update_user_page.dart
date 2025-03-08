@@ -164,6 +164,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
               _buildInput("Address", 'address', TextInputType.streetAddress),
               const SizedBox(height: 20),
               _buildSubmitButton(),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -300,43 +301,36 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
   }
 
   Widget _buildSubmitButton() {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          if (_validateFields()) {
-            final userData = {
-              "first_name": controllers['firstName']!.text,
-              "middle_name": controllers['middleName']!.text,
-              "last_name": controllers['lastName']!.text,
-              "personal_email": controllers['personalEmail']!.text,
-              "company_email": controllers['companyEmail']!.text,
-              "phone": controllers['phone']!.text,
-              "marital_status": selectedMaritalStatus,
-              "role_id": selectedRoleId,
-              "receives_emails": selectedReceiveEmails,
-              "email_frequency": controllers['emailFrequency']!.text,
-              "address": controllers['address']!.text,
-              "image": selectedImage?.path ?? widget.userData['image'],
-            };
-            widget.onUpdate(userData);
-            Get.back();
-          } else {
-            Get.snackbar(
-                "Validation Error", "Please fill all fields correctly.");
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColr,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-        ),
-        child: Text(
-          widget.buttonText,
-          style:
-              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(double.infinity, 50),
+        backgroundColor: primaryColr,
       ),
+      onPressed: () {
+        if (_validateFields()) {
+          final userData = {
+            "first_name": controllers['firstName']!.text,
+            "middle_name": controllers['middleName']!.text,
+            "last_name": controllers['lastName']!.text,
+            "personal_email": controllers['personalEmail']!.text,
+            "company_email": controllers['companyEmail']!.text,
+            "phone": controllers['phone']!.text,
+            "marital_status": selectedMaritalStatus,
+            "role_id": selectedRoleId,
+            "receives_emails": selectedReceiveEmails,
+            "email_frequency": controllers['emailFrequency']!.text,
+            "address": controllers['address']!.text,
+            "image": selectedImage?.path ?? widget.userData['image'],
+          };
+          widget.onUpdate(userData);
+          Get.back();
+        } else {
+          Get.snackbar("Validation Error", "Please fill all fields correctly.");
+        }
+      },
+      child: Text(widget.buttonText,
+          style: const TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold)),
     );
   }
 

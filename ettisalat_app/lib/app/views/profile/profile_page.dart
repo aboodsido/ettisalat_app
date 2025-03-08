@@ -39,50 +39,52 @@ class _ProfilePageState extends State<ProfilePage>
           )
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(50),
+              topRight: Radius.circular(50),
+            ),
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-          child: Column(
-            children: [
-              TabBar(
-                dividerHeight: 0,
-                controller: _controller,
-                indicator: const BoxDecoration(),
-                tabs: [
-                  Tab(
-                    child: _buildTab(
-                      label: 'General',
-                      tabIndex: 0,
-                    ),
-                  ),
-                  Tab(
-                    child: _buildTab(
-                      label: 'Change Password',
-                      tabIndex: 1,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Expanded(
-                child: TabBarView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            child: Column(
+              children: [
+                TabBar(
+                  dividerHeight: 0,
                   controller: _controller,
-                  children: const [
-                    UserDataTab(),
-                    ChangePasswordTab(),
+                  indicator: const BoxDecoration(),
+                  tabs: [
+                    Tab(
+                      child: _buildTab(
+                        label: 'General',
+                        tabIndex: 0,
+                      ),
+                    ),
+                    Tab(
+                      child: _buildTab(
+                        label: 'Change Password',
+                        tabIndex: 1,
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ],
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: TabBarView(
+                    controller: _controller,
+                    children: const [
+                      UserDataTab(),
+                      ChangePasswordTab(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

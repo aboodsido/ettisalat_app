@@ -1,5 +1,7 @@
+import 'package:ettisalat_app/app/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../controllers/device_controller.dart';
 
 class AddDevicePage extends StatefulWidget {
@@ -116,6 +118,10 @@ class _AddDevicePageState extends State<AddDevicePage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: primaryColr,
+                ),
                 onPressed: () {
                   if (nameController.text.isNotEmpty &&
                       ipController.text.isNotEmpty &&
@@ -142,7 +148,13 @@ class _AddDevicePageState extends State<AddDevicePage> {
                         'Empty Fields!', 'Fill all the fields to add device!');
                   }
                 },
-                child: const Text("Add Device"),
+                child: const Text(
+                  "Add Device",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),

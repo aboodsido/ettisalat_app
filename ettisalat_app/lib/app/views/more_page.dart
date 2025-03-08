@@ -1,9 +1,9 @@
-import '../constants.dart';
-import '../controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
+import '../constants.dart';
+import '../controllers/auth_controller.dart';
 import '../theme_controller.dart';
 
 class MorePage extends StatefulWidget {
