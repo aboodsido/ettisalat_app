@@ -83,13 +83,11 @@ class SettingsPage extends StatelessWidget {
                 child: Obx(
                   () => buildDropdownListWidget(
                     items: const [
-                      DropdownMenuItem(value: 'online', child: Text('Online')),
+                      DropdownMenuItem(value: '1', child: Text('Online')),
                       DropdownMenuItem(
-                          value: 'offline_short_term',
-                          child: Text('Offline Short Term')),
+                          value: '2', child: Text('Offline Short Term')),
                       DropdownMenuItem(
-                          value: 'offline_long_term',
-                          child: Text('Offline Long Term')),
+                          value: '3', child: Text('Offline Long Term')),
                       DropdownMenuItem(
                           value: 'all', child: Text('All Statuses')),
                     ],

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -26,7 +27,6 @@ class AuthController extends GetxController {
     String? token = await storage.read(key: 'auth_token');
 
     if (token != null) {
-      // Token exists, navigate to the home screen
       Get.offNamed('/home');
     } else {
       // No token found, stay on the login screen
@@ -63,7 +63,6 @@ class AuthController extends GetxController {
 
           // Save permissions in the manager
           Get.find<PermissionManager>().setPermissions(permissions);
-          print(permissions);
 
           // Optionally, store other user information if needed
           await storage.write(
@@ -96,7 +95,6 @@ class AuthController extends GetxController {
         }
       } catch (e) {
         // Handle any errors during the API request
-        print(e);
         Get.snackbar(
           'Error',
           'An error occurred: $e',
@@ -120,7 +118,7 @@ class AuthController extends GetxController {
     }
   }
 
-  // Logout method
+// Logout method
   void logout() async {
     // Show confirmation dialog before logging out
     Get.dialog(

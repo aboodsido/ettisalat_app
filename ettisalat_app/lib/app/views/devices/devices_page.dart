@@ -47,18 +47,16 @@ class DevicesPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: buildSearchField(),
             ),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               child: Obx(
                 () => Row(
                   children: [
-                    buildCountCard('${deviceController.onlineDeviceCount} ',
-                        Colors.green),
+                    buildCountCard(
+                        '${deviceController.onlineDeviceCount} ', Colors.green),
                     buildCountCard(
                         '${deviceController.offlineShortDeviceCount} ',
                         Colors.orangeAccent),
@@ -113,7 +111,6 @@ class DevicesPage extends StatelessWidget {
                               vertical: 10, horizontal: 12),
                           itemCount: filteredDevices.length,
                           itemBuilder: (context, index) {
-                            print(filteredDevices.length);
                             final device = filteredDevices[index];
                             return Card(
                               elevation: 2,
@@ -122,9 +119,9 @@ class DevicesPage extends StatelessWidget {
                               child: ListTile(
                                 leading: buildDeviceIdBadge(
                                   device.id,
-                                  device.status == 'online'
+                                  device.status == '1'
                                       ? Colors.green
-                                      : device.status == 'offline_short_term'
+                                      : device.status == '2'
                                           ? Colors.orangeAccent
                                           : Colors.red,
                                 ),
@@ -164,7 +161,7 @@ class DevicesPage extends StatelessWidget {
             ),
             // Pagination controls
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -179,9 +176,11 @@ class DevicesPage extends StatelessWidget {
                   ),
                   Obx(() {
                     return Text(
-                      'Page ${deviceController.currentPage.value} of ${deviceController.lastPage.value}',
-                      style:
-                          const TextStyle(fontSize: 16, color: primaryColr),
+                      'Page ${deviceController.currentPage.value} - ${deviceController.lastPage.value}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: primaryColr,
+                      ),
                     );
                   }),
                   IconButton(

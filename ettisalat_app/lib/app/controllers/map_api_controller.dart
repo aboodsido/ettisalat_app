@@ -42,11 +42,11 @@ class MapApiController extends GetxController {
   }
 
   Future<void> loadCustomIcons() async {
-    markerIcons["online"] =
+    markerIcons["1"] = //online
         await getResizedMarker('assets/images/online.png', 64); // Adjust size
-    markerIcons["offline_short_term"] =
+    markerIcons["2"] = //offline short time
         await getResizedMarker('assets/images/offline_short_term.png', 64);
-    markerIcons["offline_long_term"] =
+    markerIcons["3"] = //offline long time
         await getResizedMarker('assets/images/offline_long_term.png', 64);
 
     update(); // Notify GetX to refresh UI
@@ -87,7 +87,6 @@ class MapApiController extends GetxController {
           devices.value =
               dataList.map((json) => MapDevice.fromJson(json)).toList();
           _createMarkers();
-          print(devices.length);
         } else {
           Get.snackbar(
               'Error', 'Failed to load devices: ${jsonResponse['message']}');
@@ -96,7 +95,6 @@ class MapApiController extends GetxController {
         Get.snackbar('Error', 'Server error: ${response.statusCode}');
       }
     } catch (e) {
-      print(e);
       Get.snackbar('Error', 'An error occurred: $e');
     } finally {
       isLoading.value = false;

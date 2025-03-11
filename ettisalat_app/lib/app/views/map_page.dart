@@ -34,7 +34,6 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  // تحويل قيمة mapLayer إلى نوع MapType
   MapType _getMapType(String mapLayer) {
     switch (mapLayer) {
       case 'satellite':

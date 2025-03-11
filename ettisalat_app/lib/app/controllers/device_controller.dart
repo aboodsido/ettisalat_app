@@ -58,9 +58,9 @@ class DeviceController extends GetxController {
 
         totalDevices.value = jsonData['data']['total_records'];
 
-        fetchDeviceCountByStatus('online');
-        fetchDeviceCountByStatus('offline_short_term');
-        fetchDeviceCountByStatus('offline_long_term');
+        fetchDeviceCountByStatus('1');
+        fetchDeviceCountByStatus('2');
+        fetchDeviceCountByStatus('3');
 
         // Update pagination details
         currentPage.value = jsonData['data']['current_page'];
@@ -71,7 +71,6 @@ class DeviceController extends GetxController {
       }
     } catch (e) {
       Get.snackbar("Error", "An error occurred: $e");
-      print(e);
     } finally {
       isLoading.value = false;
     }
@@ -118,11 +117,11 @@ class DeviceController extends GetxController {
         final jsonData = json.decode(response.body);
         int totalRecords = jsonData['data']['total_records'];
 
-        if (status == 'online') {
+        if (status == '1') {
           onlineDeviceCount.value = totalRecords;
-        } else if (status == 'offline_short_term') {
+        } else if (status == '2') {
           offlineShortDeviceCount.value = totalRecords;
-        } else if (status == 'offline_long_term') {
+        } else if (status == '3') {
           offlineLongDeviceCount.value = totalRecords;
         }
       } else {

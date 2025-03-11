@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 
 import '../../controllers/user_controller.dart';
 import '../../services/permission_manager.dart';
-import 'add_user_page.dart';
 import '../settings_page.dart';
+import 'add_user_page.dart';
 import 'update_user_page.dart';
 
 class UsersPage extends StatelessWidget {

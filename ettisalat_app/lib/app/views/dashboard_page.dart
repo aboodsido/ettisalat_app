@@ -24,52 +24,50 @@ class DashboardPage extends StatelessWidget {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(50),
-              topRight: Radius.circular(50),
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
           ),
-          padding: const EdgeInsets.all(16), // Padding around the column
-          child: Obx(
-            () => Column(
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                buildCard(
-                  title: "DEVICES",
-                  number: "${deviceController.totalDevices}",
-                  icon: Icons.wifi,
-                  color: const Color(0xFFD8ECF7),
-                  circleColor: const Color(0xFF00A1D3),
-                ),
-                buildCard(
-                  title: "OPERATIONAL",
-                  number: "${deviceController.onlineDeviceCount}",
-                  icon: Icons.wifi,
-                  color: const Color(0xFFE0F8E0),
-                  circleColor: const Color(0xFF3CD653),
-                ),
-                buildCard(
-                  title: "OFFLINE SHORT TERM",
-                  number: "${deviceController.offlineShortDeviceCount}",
-                  icon: Icons.wifi,
-                  color: const Color(0xFFFFEBE4),
-                  circleColor: const Color(0xFFFC9375),
-                ),
-                buildCard(
-                  title: "OFFLINE LONG TERM",
-                  number: "${deviceController.offlineLongDeviceCount}",
-                  icon: Icons.wifi,
-                  color: const Color(0xFFFFE0E5),
-                  circleColor: const Color(0xFFF95979),
-                ),
-              ],
-            ),
+        ),
+        padding: const EdgeInsets.all(16), // Padding around the column
+        child: Obx(
+          () => Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              buildCard(
+                title: "DEVICES",
+                number: "${deviceController.totalDevices}",
+                icon: Icons.wifi,
+                color: const Color(0xFFD8ECF7),
+                circleColor: const Color(0xFF00A1D3),
+              ),
+              buildCard(
+                title: "OPERATIONAL",
+                number: "${deviceController.onlineDeviceCount}",
+                icon: Icons.wifi,
+                color: const Color(0xFFE0F8E0),
+                circleColor: const Color(0xFF3CD653),
+              ),
+              buildCard(
+                title: "OFFLINE SHORT TERM",
+                number: "${deviceController.offlineShortDeviceCount}",
+                icon: Icons.wifi,
+                color: const Color(0xFFFFEBE4),
+                circleColor: const Color(0xFFFC9375),
+              ),
+              buildCard(
+                title: "OFFLINE LONG TERM",
+                number: "${deviceController.offlineLongDeviceCount}",
+                icon: Icons.wifi,
+                color: const Color(0xFFFFE0E5),
+                circleColor: const Color(0xFFF95979),
+              ),
+            ],
           ),
         ),
       ),
