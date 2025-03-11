@@ -1,3 +1,4 @@
+import 'package:ettisalat_app/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -64,7 +65,7 @@ class _MapPageState extends State<MapPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () => Get.toNamed('/settings'),
+            onPressed: () => Get.toNamed(AppRoutes.SETTINGS),
             icon: const Icon(Icons.settings_outlined),
           ),
         ],

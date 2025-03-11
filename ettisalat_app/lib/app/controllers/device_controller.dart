@@ -152,7 +152,7 @@ class DeviceController extends GetxController {
         if (response.statusCode == 200) {
           if (responseBody['success']) {
             Get.snackbar("Success", message);
-            fetchDevicesAPI();
+            fetchDevicesAPI(isRefreshing: true);
           } else {
             Get.snackbar("Failed", message);
           }
@@ -187,7 +187,7 @@ class DeviceController extends GetxController {
         if (response.statusCode == 200) {
           Get.snackbar("Success", "Device updated successfully");
           // Refresh the devices list after the update
-          fetchDevicesAPI();
+          fetchDevicesAPI(isRefreshing: true);
         } else {
           Get.snackbar("Error", "Failed to update device");
         }
@@ -215,7 +215,7 @@ class DeviceController extends GetxController {
         if (response.statusCode == 200) {
           Get.snackbar("Success", "Device deleted successfully");
           // Refresh the devices list after deletion
-          fetchDevicesAPI();
+          fetchDevicesAPI(isRefreshing: true);
         } else {
           Get.snackbar("Error", "Failed to delete device");
         }

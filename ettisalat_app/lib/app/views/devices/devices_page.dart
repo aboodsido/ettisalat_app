@@ -1,3 +1,4 @@
+import 'package:ettisalat_app/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -29,7 +30,7 @@ class DevicesPage extends StatelessWidget {
           IconButton(
             tooltip: 'Settings',
             onPressed: () {
-              Get.toNamed('/settings');
+              Get.toNamed(AppRoutes.SETTINGS);
             },
             icon: const Icon(Icons.settings_outlined),
           ),
@@ -107,6 +108,7 @@ class DevicesPage extends StatelessWidget {
                           deviceController.refreshDevices();
                         },
                         child: ListView.builder(
+                          physics: const BouncingScrollPhysics(),
                           padding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 12),
                           itemCount: filteredDevices.length,

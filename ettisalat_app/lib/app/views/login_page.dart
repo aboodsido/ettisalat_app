@@ -18,6 +18,9 @@ class LoginPage extends StatelessWidget {
           body: Stack(
             children: [
               SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                physics: const BouncingScrollPhysics(),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -117,8 +120,7 @@ class LoginPage extends StatelessWidget {
               ),
               controller.loginIndicator.value
                   ? Container(
-                      color: Colors.white
-                          .withOpacity(0.5),
+                      color: Colors.white.withOpacity(0.5),
                       child: const Center(
                         child: CircularProgressIndicator(
                           backgroundColor: Colors.transparent,
@@ -140,10 +142,13 @@ class LoginPage extends StatelessWidget {
         content: TextField(
           onChanged: (value) => controller.email.value = value,
           decoration: const InputDecoration(
-            hintText: "example@xyz.com",
             border: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(10)),
+              borderSide: BorderSide.none,
             ),
+            hintText: "example@xyz.com",
+            filled: true,
+            fillColor: Color.fromRGBO(232, 240, 254, 1),
           ),
           keyboardType: TextInputType.emailAddress,
         ),

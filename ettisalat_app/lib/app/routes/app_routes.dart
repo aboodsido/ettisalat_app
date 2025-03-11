@@ -21,7 +21,7 @@ class AppRoutes {
   static const PROFILE = '/profile';
 
   static final routes = [
-    GetPage(name: SPLASH, page: () => const SplashPage()),
+    GetPage(name: SPLASH, page: () => SplashPage()),
     GetPage(name: LOGIN, page: () => LoginPage()),
     GetPage(name: HOME, page: () => const HomePage()),
     GetPage(
@@ -30,7 +30,7 @@ class AppRoutes {
     ),
     GetPage(name: USERS, page: () => const UsersPage()),
     GetPage(name: SETTINGS, page: () => const SettingsPage()),
-    GetPage(name: MORE, page: () => MorePage()),
-    GetPage(name: PROFILE, page: () => ProfilePage()),
+    GetPage(name: MORE, page: () => const MorePage()),
+    GetPage(name: PROFILE, page: () => const ProfilePage()),
   ];
 }

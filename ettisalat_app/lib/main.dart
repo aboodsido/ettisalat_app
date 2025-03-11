@@ -9,7 +9,7 @@ import 'app/theme_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(ThemeController());
-  runApp(EttisalatApp());
+  runApp(const EttisalatApp());
 }
 
 class EttisalatApp extends StatelessWidget {

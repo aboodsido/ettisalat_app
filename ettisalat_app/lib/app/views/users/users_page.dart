@@ -49,6 +49,7 @@ class UsersPage extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.only(top: 10),
               child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.all(16),
                 itemCount: userController.users.length,
                 itemBuilder: (context, index) {

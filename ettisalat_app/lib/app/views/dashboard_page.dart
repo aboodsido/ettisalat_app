@@ -1,3 +1,4 @@
+import 'package:ettisalat_app/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ettisalat_app/app/controllers/device_controller.dart';
@@ -39,7 +40,7 @@ class DashboardPage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              Get.toNamed('/settings');
+              Get.toNamed(AppRoutes.SETTINGS);
             },
             icon: const Icon(Icons.settings_outlined),
           )
