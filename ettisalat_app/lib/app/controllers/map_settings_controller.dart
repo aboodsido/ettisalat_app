@@ -8,7 +8,7 @@ class MapSettingsController extends GetxController {
   RxBool disableDoubleClickZoom = false.obs;
   RxBool showPlaces = true.obs;
   RxBool showCompass = false.obs;
-  RxBool showZoomControls = false.obs;
+  RxBool showZoomControls = true.obs;
 
   var isLoaded = false.obs;
 
