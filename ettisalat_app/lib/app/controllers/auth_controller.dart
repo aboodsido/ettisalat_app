@@ -50,43 +50,61 @@ class AuthController extends GetxController {
           body: body,
         );
 
-        if (response.statusCode == 200) {
+        if (response.body.isNotEmpty) {
           var data = json.decode(response.body);
 
-          // Extract the token from the response
-          String token = data['data']['token'];
+          if (response.statusCode == 200 && data['data'] != null) {
+            // Extract the token from the response
+            String token = data['data']['token'] ?? '';
 
-          // Store the token securely
-          await storage.write(key: 'auth_token', value: token);
+            // Store the token securely
+            await storage.write(key: 'auth_token', value: token);
 
-          final permissions = List<String>.from(data['data']['permissions']);
+            final permissions =
+                List<String>.from(data['data']['permissions'] ?? []);
 
-          // Save permissions in the manager
-          Get.find<PermissionManager>().setPermissions(permissions);
+            // Save permissions in the manager
+            Get.find<PermissionManager>().setPermissions(permissions);
 
-          // Optionally, store other user information if needed
-          await storage.write(
-              key: 'user_id', value: data['data']['user']['id'].toString());
-          await storage.write(
-              key: 'user_email', value: data['data']['user']['company_email']);
-          await storage.write(
-              key: 'first_name',
-              value: '${data['data']['user']['first_name']}');
-          await storage.write(
-              key: 'middle_name',
-              value: '${data['data']['user']['middle_name']}');
-          await storage.write(
-              key: 'last_name', value: '${data['data']['user']['last_name']}');
-          await storage.write(
-              key: 'user_image', value: '${data['data']['user']['image']}');
+            // Optionally, store other user information if needed
+            await storage.write(
+                key: 'user_id',
+                value: data['data']['user']?['id']?.toString() ?? '');
+            await storage.write(
+                key: 'user_email',
+                value: data['data']['user']?['company_email'] ?? '');
+            await storage.write(
+                key: 'first_name',
+                value: data['data']['user']?['first_name'] ?? '');
+            await storage.write(
+                key: 'middle_name',
+                value: data['data']['user']?['middle_name'] ?? '');
+            await storage.write(
+                key: 'last_name',
+                value: data['data']['user']?['last_name'] ?? '');
+            await storage.write(
+                key: 'user_image', value: data['data']['user']?['image'] ?? '');
 
-          // Navigate to the home screen after successful login
-          Get.offNamed('/home');
+            // Navigate to the home screen after successful login
+            Get.offNamed('/home');
+          } else {
+            // Extract error message safely
+            String errorMessage =
+                data['message'] ?? 'Login failed. Please try again.';
+
+            Get.snackbar(
+              'Error',
+              errorMessage,
+              icon: const Icon(
+                Icons.warning,
+                color: Colors.red,
+              ),
+            );
+          }
         } else {
-          // Show error if login fails
           Get.snackbar(
             'Error',
-            'Login failed: ${response.statusCode}',
+            'Server returned an empty response. Please try again later.',
             icon: const Icon(
               Icons.warning,
               color: Colors.red,
@@ -94,10 +112,9 @@ class AuthController extends GetxController {
           );
         }
       } catch (e) {
-        // Handle any errors during the API request
         Get.snackbar(
           'Error',
-          'An error occurred: $e',
+          'An unexpected error occurred: $e',
           icon: const Icon(
             Icons.error,
             color: Colors.red,
