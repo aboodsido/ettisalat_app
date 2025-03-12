@@ -1,10 +1,12 @@
+import 'package:ettisalat_app/app/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../controllers/user_controller.dart';
+import '../../services/body_top_edge.dart';
+import '../../services/custom_appbar.dart';
 import '../../services/permission_manager.dart';
-import '../settings_page.dart';
 import 'add_user_page.dart';
 import 'update_user_page.dart';
 
@@ -20,30 +22,14 @@ class UsersPage extends StatelessWidget {
     userController.fetchUsers();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Users'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Get.to(const SettingsPage());
-            },
-            icon: const Icon(Icons.settings_outlined),
-          )
-        ],
-      ),
+      appBar: customAppBar(title: 'Users'),
       body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-        ),
+        decoration: bodyTopEdge(),
         child: Obx(
           () {
             if (userController.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                  child: CircularProgressIndicator(color: primaryColr));
             }
 
             return Padding(

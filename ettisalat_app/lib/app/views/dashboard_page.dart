@@ -1,7 +1,8 @@
-import 'package:ettisalat_app/app/routes/app_routes.dart';
+import 'package:ettisalat_app/app/controllers/device_controller.dart';
+import 'package:ettisalat_app/app/services/body_top_edge.dart';
+import 'package:ettisalat_app/app/services/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ettisalat_app/app/controllers/device_controller.dart';
 
 import '../services/dashboard_card.dart';
 
@@ -34,26 +35,9 @@ class DashboardPage extends StatelessWidget {
     animateCards(); // Start animation when the widget builds
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Get.toNamed(AppRoutes.SETTINGS);
-            },
-            icon: const Icon(Icons.settings_outlined),
-          )
-        ],
-      ),
+      appBar: customAppBar(title: 'Dashboard'),
       body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-        ),
+        decoration: bodyTopEdge(),
         padding: const EdgeInsets.all(16),
         child: Obx(
           () => Column(

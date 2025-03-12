@@ -19,19 +19,6 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    checkLoggedInStatus();
-  }
-
-  // Check if the user is already logged in
-  void checkLoggedInStatus() async {
-    String? token = await storage.read(key: 'auth_token');
-
-    if (token != null) {
-      Get.offNamed('/home');
-    } else {
-      // No token found, stay on the login screen
-      print('No token found, redirecting to login.');
-    }
   }
 
   // Login method

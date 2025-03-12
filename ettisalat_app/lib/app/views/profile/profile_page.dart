@@ -1,8 +1,8 @@
+import 'package:ettisalat_app/app/services/body_top_edge.dart';
+import 'package:ettisalat_app/app/services/custom_appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../constants.dart';
-import '../settings_page.dart';
 import 'change_password_page.dart';
 import 'user_profile_data.dart';
 
@@ -26,26 +26,9 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Get.to(const SettingsPage());
-            },
-            icon: const Icon(Icons.settings_outlined),
-          )
-        ],
-      ),
+      appBar: customAppBar(title: 'Profile'),
       body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-        ),
+        decoration: bodyTopEdge(),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           child: Column(

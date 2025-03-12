@@ -1,6 +1,7 @@
-import 'package:get/get.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
 
 class PermissionManager extends GetxService {
   final RxList<String> _permissions = <String>[].obs;
@@ -16,7 +17,8 @@ class PermissionManager extends GetxService {
   Future<void> _loadPermissions() async {
     String? storedPermissions = await _storage.read(key: _permissionKey);
     if (storedPermissions != null) {
-      List<String> permissionsList = List<String>.from(jsonDecode(storedPermissions));
+      List<String> permissionsList =
+          List<String>.from(jsonDecode(storedPermissions));
       _permissions.assignAll(permissionsList);
     }
   }
@@ -27,7 +29,6 @@ class PermissionManager extends GetxService {
   }
 
   bool hasPermission(String permission) {
-    print(_permissions);
     return _permissions.contains(permission);
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 import '../routes/app_routes.dart';
 
@@ -12,8 +13,7 @@ class SplashPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<bool> isThereToken = storage.containsKey(key: 'auth_token');
 
-    // Navigate to Login screen after 3 seconds
-    Future.delayed(const Duration(seconds: 4), () async {
+    Future.delayed(const Duration(seconds: 5), () async {
       if (!await isThereToken) {
         print('the token is invalid !');
         Get.offNamed(AppRoutes.LOGIN);
@@ -27,15 +27,14 @@ class SplashPage extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            'assets/images/spBg.png',
-            fit: BoxFit.cover,
-          ),
           Center(
-            child: Image.asset(
-              'assets/images/splashLogo.png',
-              width: 200,
-              height: 200,
+            child: Lottie.asset(
+              'assets/lottie/loading_animation.json',
+              width: 300,
+              height: 300,
+              fit: BoxFit.contain,
+              repeat: true,
+              animate: true,
             ),
           ),
         ],

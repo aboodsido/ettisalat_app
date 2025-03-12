@@ -1,4 +1,5 @@
-import 'package:ettisalat_app/app/routes/app_routes.dart';
+import 'package:ettisalat_app/app/services/body_top_edge.dart';
+import 'package:ettisalat_app/app/services/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
@@ -47,26 +48,9 @@ class _MorePageState extends State<MorePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('More'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Get.toNamed(AppRoutes.SETTINGS);
-            },
-            icon: const Icon(Icons.settings_outlined),
-          )
-        ],
-      ),
+      appBar: customAppBar(title: 'More'),
       body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-        ),
+        decoration: bodyTopEdge(),
         child: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),

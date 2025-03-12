@@ -196,8 +196,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
   ) {
     // Ensure the value exists in the items list
     if (!items.contains(value)) {
-      value =
-          items.isNotEmpty ? items.first : null; // Default to the first item
+      value = items.isNotEmpty ? items.first : null;
     }
 
     return Column(
@@ -205,7 +204,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
       children: [
         _buildLabel(label),
         DropdownButtonFormField<dynamic>(
-          value: value, // Ensure this value exists in the items list
+          value: value,
           items: items
               .map((item) => DropdownMenuItem(
                     value: item,

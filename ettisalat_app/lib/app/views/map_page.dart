@@ -1,4 +1,4 @@
-import 'package:ettisalat_app/app/routes/app_routes.dart';
+import 'package:ettisalat_app/app/services/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -60,16 +60,7 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Map'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () => Get.toNamed(AppRoutes.SETTINGS),
-            icon: const Icon(Icons.settings_outlined),
-          ),
-        ],
-      ),
+      appBar: customAppBar(title: 'Map'),
       body: Obx(() {
         if (!mapSettingsController.isLoaded.value) {
           return const Center(child: CircularProgressIndicator());

@@ -1,11 +1,15 @@
-import 'package:ettisalat_app/app/routes/app_routes.dart';
+import 'package:ettisalat_app/app/services/body_top_edge.dart';
+import 'package:ettisalat_app/app/services/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../constants.dart';
 import '../../controllers/device_controller.dart';
+import '../../services/device_counter_card.dart';
+import '../../services/pagination_widget.dart';
 import '../../services/permission_manager.dart';
+import '../../services/search_bar_widget.dart';
 import 'add_device_page.dart';
 import 'update_device_page.dart';
 
@@ -23,33 +27,16 @@ class DevicesPage extends StatelessWidget {
     // deviceController.fetchDevicesAPI();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Devices'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            tooltip: 'Settings',
-            onPressed: () {
-              Get.toNamed(AppRoutes.SETTINGS);
-            },
-            icon: const Icon(Icons.settings_outlined),
-          ),
-        ],
-      ),
+      appBar: customAppBar(title: 'Devices'),
       body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-        ),
+        decoration: bodyTopEdge(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: buildSearchField(),
+              child: SearchBarWidget(
+                  searchController: searchController, searchQuery: searchQuery),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
@@ -73,13 +60,12 @@ class DevicesPage extends StatelessWidget {
               child: Text(
                 'Devices',
                 style: TextStyle(
-                  color: Color.fromARGB(255, 14, 120, 155),
+                  color: primaryColr,
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            // The list of devices and pagination inside an expanded widget
             Expanded(
               child: Obx(() {
                 final filteredDevices =
@@ -162,41 +148,7 @@ class DevicesPage extends StatelessWidget {
               }),
             ),
             // Pagination controls
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: primaryColr,
-                    ),
-                    onPressed: () {
-                      deviceController.previousPage();
-                    },
-                  ),
-                  Obx(() {
-                    return Text(
-                      'Page ${deviceController.currentPage.value} - ${deviceController.lastPage.value}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: primaryColr,
-                      ),
-                    );
-                  }),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.arrow_forward,
-                      color: primaryColr,
-                    ),
-                    onPressed: () {
-                      deviceController.nextPage();
-                    },
-                  ),
-                ],
-              ),
-            ),
+            paginationWidget(deviceController: deviceController),
           ],
         ),
       ),
@@ -209,33 +161,6 @@ class DevicesPage extends StatelessWidget {
               },
             )
           : null,
-    );
-  }
-
-  Widget buildSearchField() {
-    return TextField(
-      controller: searchController,
-      decoration: InputDecoration(
-        hintText: 'Search devices by name or IP...',
-        prefixIcon: const Icon(Icons.search, color: primaryColr),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: primaryColr),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: primaryColr),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: primaryColr, width: 2),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      onChanged: (value) {
-        searchQuery.value = value.toLowerCase();
-      },
     );
   }
 
@@ -324,28 +249,6 @@ class DevicesPage extends StatelessWidget {
         ],
       ),
       barrierDismissible: false,
-    );
-  }
-
-  Expanded buildCountCard(String count, Color color) {
-    return Expanded(
-      child: Card(
-        elevation: 2,
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              CircleAvatar(
-                backgroundColor: color,
-                radius: 5,
-              ),
-              const SizedBox(height: 5),
-              Text('$count devices'),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
