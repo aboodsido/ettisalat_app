@@ -19,10 +19,20 @@ class DeviceController extends GetxController {
   var offlineShortDeviceCount = 0.obs;
   var offlineLongDeviceCount = 0.obs;
 
+  // New reactive filter (null means no filter)
+  RxnString currentFilter = RxnString();
+
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
-  Future<void> fetchDevicesAPI({bool isRefreshing = false}) async {
+  Future<void> fetchDevicesAPI(
+      {bool isRefreshing = false, String? status}) async {
     if (isLoading.value) return; // Prevent multiple requests
+
+    // If a status is provided, update the controller's filter and reset pagination
+    if (status != null) {
+      currentFilter.value = status;
+      currentPage.value = 1;
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       isLoading.value = true;
@@ -35,7 +45,15 @@ class DeviceController extends GetxController {
         return;
       }
 
-      final url = Uri.parse('$baseUrl/devices/list?page=${currentPage.value}');
+      // If a filter is set, append it to the URL
+      String filterQuery =
+          (currentFilter.value != null && currentFilter.value!.isNotEmpty)
+              ? "&status=${currentFilter.value}"
+              : "";
+
+      final url = Uri.parse(
+          '$baseUrl/devices/list?page=${currentPage.value}$filterQuery');
+
       final headers = {
         "Authorization": "Bearer $authToken",
         'Accept-Encoding': 'gzip, deflate, br',
@@ -51,6 +69,7 @@ class DeviceController extends GetxController {
           devices.clear(); // Clear only when refreshing
         }
 
+        devices.clear();
         devices.addAll(devicesData
             .map((device) => Device.fromJson(device))
             .toList()
@@ -65,7 +84,7 @@ class DeviceController extends GetxController {
         // Update pagination details
         currentPage.value = jsonData['data']['current_page'];
         lastPage.value =
-            (jsonData['data']['total_records'] / perPage.value).round();
+            (jsonData['data']['total_records'] / perPage.value).ceil();
       } else {
         Get.snackbar("Error", "Failed to fetch devices");
       }
@@ -92,7 +111,7 @@ class DeviceController extends GetxController {
 
   void refreshDevices() {
     currentPage.value = 1;
-    fetchDevicesAPI(isRefreshing: true);
+    fetchDevicesAPI(isRefreshing: true, status: currentFilter.value);
   }
 
   Future<void> fetchDeviceCountByStatus(String status) async {

@@ -6,39 +6,88 @@ import 'package:lottie/lottie.dart';
 import '../routes/app_routes.dart';
 
 class SplashPage extends StatelessWidget {
-  SplashPage({super.key});
-  FlutterSecureStorage storage = const FlutterSecureStorage();
+  const SplashPage({super.key});
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   @override
   Widget build(BuildContext context) {
-    Future<bool> isThereToken = storage.containsKey(key: 'auth_token');
-
-    Future.delayed(const Duration(seconds: 5), () async {
-      if (!await isThereToken) {
-        print('the token is invalid !');
-        Get.offNamed(AppRoutes.LOGIN);
-      } else {
-        print('the token is valid !');
-        Get.offNamed(AppRoutes.HOME);
-      }
-    });
-
-    return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Center(
-            child: Lottie.asset(
-              'assets/lottie/loading_animation.json',
-              width: 300,
-              height: 300,
-              fit: BoxFit.contain,
-              repeat: true,
-              animate: true,
+    return FutureBuilder<bool>(
+      future: storage.containsKey(key: 'auth_token'),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(
+              child: Lottie.asset(
+                'assets/lottie/loading_animation.json',
+                width: 300,
+                height: 300,
+                fit: BoxFit.contain,
+                repeat: true,
+                animate: true,
+              ),
             ),
+          );
+        }
+
+        // If there's an error or no token, navigate to the login screen
+        if (snapshot.hasError || !snapshot.hasData || !snapshot.data!) {
+          Future.delayed(const Duration(seconds: 4), () {
+            Get.offNamed(AppRoutes.LOGIN);
+          });
+          return Scaffold(
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Lottie.asset(
+                    'assets/lottie/loading_animation.json',
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.contain,
+                    repeat: true,
+                    animate: true,
+                  ),
+                ),
+                const Center(
+                  child: Text(
+                    'Welcome!',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        // If the token exists, navigate to home screen
+        Future.delayed(const Duration(seconds: 4), () {
+          Get.offNamed(AppRoutes.HOME);
+        });
+
+        return Scaffold(
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: Lottie.asset(
+                  'assets/lottie/loading_animation.json',
+                  width: 300,
+                  height: 300,
+                  fit: BoxFit.contain,
+                  repeat: true,
+                  animate: true,
+                ),
+              ),
+              const Center(
+                child: Text(
+                  'Welcome Again!', // Display Welcome Again if token exists
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

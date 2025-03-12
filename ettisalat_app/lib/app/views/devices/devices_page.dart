@@ -13,17 +13,51 @@ import '../../services/search_bar_widget.dart';
 import 'add_device_page.dart';
 import 'update_device_page.dart';
 
-class DevicesPage extends StatelessWidget {
-  final DeviceController deviceController = Get.find();
-  final TextEditingController searchController = TextEditingController();
-  final RxString searchQuery = ''.obs;
-  final PermissionManager permissionManager = Get.find<PermissionManager>();
-
+class DevicesPage extends StatefulWidget {
   DevicesPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<DevicesPage> createState() => _DevicesPageState();
+}
+
+class _DevicesPageState extends State<DevicesPage> {
+  final DeviceController deviceController = Get.find();
+
+  final TextEditingController searchController = TextEditingController();
+
+  final RxString searchQuery = ''.obs;
+
+  final PermissionManager permissionManager = Get.find<PermissionManager>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Check if a status filter was passed via Get.arguments.
+    final args = Get.arguments;
+    String? status;
+    if (args != null && args['status'] != null) {
+      status = args['status'];
+    }
+    // If a status is provided, fetch with that filter; otherwise, fetch all devices.
+    if (status != null) {
+      deviceController.fetchDevicesAPI(status: status);
+    } else {
+      deviceController.refreshDevices();
+    }
+  }
+
+  @override
+  void dispose() {
+    // Reset the filter when exiting the DevicesPage.
+    deviceController.currentFilter.value = null;
+    // Optionally, refresh devices without filter if needed.
     deviceController.refreshDevices();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // deviceController.refreshDevices();
     // deviceController.fetchDevicesAPI();
 
     return Scaffold(
@@ -67,85 +101,87 @@ class DevicesPage extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Obx(() {
-                final filteredDevices =
-                    deviceController.devices.where((device) {
-                  final deviceName = device.name.toLowerCase();
-                  final deviceIP = device.ipAddress.toLowerCase();
-                  return deviceName.contains(searchQuery.value) ||
-                      deviceIP.contains(searchQuery.value);
-                }).toList();
-                if (filteredDevices.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'No devices found.',
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
-                    ),
-                  );
-                }
-                return deviceController.isLoading.value
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: primaryColr,
-                        ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: () async {
-                          deviceController.refreshDevices();
-                        },
-                        child: ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 12),
-                          itemCount: filteredDevices.length,
-                          itemBuilder: (context, index) {
-                            final device = filteredDevices[index];
-                            return Card(
-                              elevation: 2,
-                              margin: const EdgeInsets.only(bottom: 10),
-                              color: const Color.fromARGB(241, 243, 243, 249),
-                              child: ListTile(
-                                leading: buildDeviceIdBadge(
-                                  device.id,
-                                  device.status == '1'
-                                      ? Colors.green
-                                      : device.status == '2'
-                                          ? Colors.orangeAccent
-                                          : Colors.red,
-                                ),
-                                title: Row(
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        device.name,
-                                        style: const TextStyle(
-                                            color: primaryColr,
-                                            fontWeight: FontWeight.w600),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Flexible(
-                                      child: Text(
-                                        'IP: ${device.ipAddress}',
-                                        style: const TextStyle(
-                                            color: Colors.black54),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                subtitle: Text(
-                                  "${device.lineCode}      Type: ${device.deviceType}",
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                                trailing: buildTrailingActions(device.id),
-                              ),
-                            );
+              child: Obx(
+                () {
+                  final filteredDevices =
+                      deviceController.devices.where((device) {
+                    final deviceName = device.name.toLowerCase();
+                    final deviceIP = device.ipAddress.toLowerCase();
+                    return deviceName.contains(searchQuery.value) ||
+                        deviceIP.contains(searchQuery.value);
+                  }).toList();
+                  if (filteredDevices.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No devices found.',
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
+                    );
+                  }
+                  return deviceController.isLoading.value
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColr,
+                          ),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: () async {
+                            deviceController.refreshDevices();
                           },
-                        ),
-                      );
-              }),
+                          child: ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 12),
+                            itemCount: filteredDevices.length,
+                            itemBuilder: (context, index) {
+                              final device = filteredDevices[index];
+                              return Card(
+                                elevation: 2,
+                                margin: const EdgeInsets.only(bottom: 10),
+                                color: const Color.fromARGB(241, 243, 243, 249),
+                                child: ListTile(
+                                  leading: buildDeviceIdBadge(
+                                    device.id,
+                                    device.status == '1'
+                                        ? Colors.green
+                                        : device.status == '2'
+                                            ? Colors.orangeAccent
+                                            : Colors.red,
+                                  ),
+                                  title: Row(
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          device.name,
+                                          style: const TextStyle(
+                                              color: primaryColr,
+                                              fontWeight: FontWeight.w600),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Flexible(
+                                        child: Text(
+                                          'IP: ${device.ipAddress}',
+                                          style: const TextStyle(
+                                              color: Colors.black54),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  subtitle: Text(
+                                    "${device.lineCode}      Type: ${device.deviceType}",
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
+                                  trailing: buildTrailingActions(device.id),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                },
+              ),
             ),
             // Pagination controls
             paginationWidget(deviceController: deviceController),
