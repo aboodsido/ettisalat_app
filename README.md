@@ -23,5 +23,5 @@ A **real-time hardware monitoring system** built with **Flutter** to track and a
 
 - **Flutter (Dart)** – Cross-platform mobile development  
 - **REST API** – Backend services & data handling  
-- **Google Maps API** – Hardware location tracking (if applicable)  
+- **Google Maps API** – Hardware location tracking  
 - **Notification Services** – Push notifications for alerts  
