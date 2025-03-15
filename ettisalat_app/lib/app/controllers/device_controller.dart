@@ -84,7 +84,7 @@ class DeviceController extends GetxController {
         // Update pagination details
         currentPage.value = jsonData['data']['current_page'];
         lastPage.value =
-            (jsonData['data']['total_records'] / perPage.value).ceil();
+            (totalDevices.value / perPage.value).ceil();
       } else {
         Get.snackbar("Error", "Failed to fetch devices");
       }

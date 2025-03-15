@@ -27,14 +27,20 @@ class LoginPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SizedBox(height: 50),
+                      const Center(
+                        child: Image(
+                          image: AssetImage('assets/images/jawwalLogo.png'),
+                          width: 350,
+                          height: 250,
+                        ),
+                      ),
                       const Text(
                         'Sign In',
                         style: TextStyle(
-                            fontSize: 30, fontWeight: FontWeight.bold),
+                            fontSize: 35, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 50),
+                      const SizedBox(height: 20),
                       const Text(
                         'Email',
                         style: TextStyle(
@@ -100,7 +106,7 @@ class LoginPage extends StatelessWidget {
                             primaryColr,
                           ),
                         ),
-                        onPressed: controller.login,
+                        onPressed: _validateAndLogin,
                         child: const Text(
                           'Sign In',
                           style: TextStyle(
@@ -109,10 +115,6 @@ class LoginPage extends StatelessWidget {
                             fontSize: 16,
                           ),
                         ),
-                      ),
-                      const Center(
-                        child: Image(
-                            image: AssetImage('assets/images/jawwalLogo.png')),
                       ),
                     ],
                   ),
@@ -133,6 +135,41 @@ class LoginPage extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _validateAndLogin() {
+    String email = controller.email.value.trim();
+    String password = controller.password.value.trim();
+
+    // Email validation
+    if (email.isEmpty) {
+      Get.snackbar('Error', 'Please enter your email',
+          icon: const Icon(Icons.warning, color: Colors.red));
+      return;
+    }
+
+    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+        .hasMatch(email)) {
+      Get.snackbar('Error', 'Please enter a valid email address',
+          icon: const Icon(Icons.warning, color: Colors.red));
+      return;
+    }
+
+    // Password validation
+    if (password.isEmpty) {
+      Get.snackbar('Error', 'Please enter your password',
+          icon: const Icon(Icons.warning, color: Colors.red));
+      return;
+    }
+
+    if (password.length < 6) {
+      Get.snackbar('Error', 'Password must be at least 6 characters long',
+          icon: const Icon(Icons.warning, color: Colors.red));
+      return;
+    }
+
+    // If all validations pass, proceed with login
+    controller.login();
   }
 
   void _showForgotPasswordDialog() {
